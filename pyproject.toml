@@ -103,6 +103,7 @@ editable-backend = "path"
 [tool.pdm.dev-dependencies]
 build = [
     "pip>=23.1.2",
+    "twine",
 ]
 dev = [
     "dotenv",
