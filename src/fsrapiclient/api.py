@@ -320,9 +320,6 @@ class FsrApiClient:
             /V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes
             /V0.1/Firm/{FRN}/Waiver
             
-            
-            
-
         .. note::
 
            This is a private method and is **not** intended for direct use by
