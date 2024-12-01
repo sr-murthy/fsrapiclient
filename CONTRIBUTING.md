@@ -197,7 +197,7 @@ includes Ruff linting, unit tests, Python doctests, and in that order.
 ## Versioning and Releases
 
 The [PyPI package](https://pypi.org/project/fsrapiclient/) is
-currently at version `0.1.0`.
+currently at version `0.1.1`.
 
 There is currently no dedicated pipeline for releases - both [GitHub
 releases](https://github.com/sr-murthy/fsrapiclient/releases) and
