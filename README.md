@@ -17,7 +17,7 @@
 
 # fsrapiclient
 
-A lightweight Python client library for the [UK Financial Services Register (FS Register)](https://register.fca.org.uk/s/) [RESTful API](https://register.fca.org.uk/Developer/s/). Package support on Python version and OS is summarised in the table below.
+A lightweight Python client library for the UK [Financial Services Register (FS Register)](https://register.fca.org.uk/s/) [RESTful API](https://register.fca.org.uk/Developer/s/). Package testing and support on Python version and OS is summarised in the table below.
 
 |                         | _Py 3.10_ | _Py 3.11_ | _Py 3.12_ | _Py 3.13_ |
 |-------------------------|-----------|-----------|-----------|-----------|
@@ -25,34 +25,47 @@ A lightweight Python client library for the [UK Financial Services Register (FS 
 | _Windows_               | ✅         | ✅         | ✅         | ✅         |
 | _macOS (Intel + Apple)_ | ✅         | ✅         | ✅         | ✅         |
 
-The FS Register is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the [UK Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulation Authority (PRA)](http://bankofengland.co.uk/pra).
+The FS Register is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the UK [Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulation Authority (PRA)](http://bankofengland.co.uk/pra).
 
-**NOTE #:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
+**NOTE:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#) on their developer portal. Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
 
-**NOTE #:** The author has no current or previous affiliation with either the FCA or PRA.
+**NOTE:** The author has no current or previous affiliation with either the FCA or PRA.
 
-# The FS Register API
+## Understanding the FS Register API
 
-The `fsrapiclient` functionality reflects the structure and properties of the current FS Register API (V0.1). The API is [documented](https://register.fca.org.uk/Developer/s/) but requires registration.
+The `fsrapiclient` functionality reflects the current version (`V0.1`) of the FS Register API. There is [documentation](https://register.fca.org.uk/Developer/s/) but access requires registration.
+
+The base URL for all requests is:
+```http
+https://register.fca.org.uk/services/V0.1
+```
+
+### Resources and Request Types
 
 There are three main categories of resource about which information can be requested from the register via API endpoints:
 
-* **firms** - authorised firms (either currently or previously authorised)
-* **individuals** - individuals associated or affiliated with authorised firms, either currently or previously
-* **funds** - funds or collective investment schemes (CIS), including subfunds of funds
+* **firms** - authorised and/or regulated firms (either current or past), or providing regulated products or services
+* **individuals** - individuals associated with the type of firms described above, either current or past
+* **funds** - investment funds or collective investment schemes (CIS), including subfunds of funds
 
-There is also a **common search** API endpoint that allows a search for any of these resources by name or namelike-substring and a corresponding type specification (firm, individual, or fund).
+There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund).
 
-All possible API requests are `GET` requests, and requests must include headers containing the API username and key:
+### Request Headers
+
+The FS Register API is read-only - all requests must use `GET`, and include headers containing the API username and key:
 ```http
-Accept: application/json
-X-Auth-Email: <signup email / API username>
-X-Auth-Key: <API key>
+ACCEPT: application/json
+X-AUTH-EMAIL: <signup email / API username>
+X-AUTH-KEY: <API key>
 ```
 
-These are described in a bit more detail below.
+### Rate Limiting
 
-## Firms
+According to the [documentation](https://register.fca.org.uk/Developer/s/) **rate limiting** is applied to set a **maximum of 50 requests per 10 seconds per user**, and **breaches** lead to [(HTTP 429) errors](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429) and **requests being blocked for 1 minute**.
+
+**NOTE:** Please **do not misuse** the API or this library by making excessive or malicious requests.
+
+### Requests - Firms
 
 Firms are identified by unique firm reference numbers (FRN). The following is a table summarising firm-specific API endpoints:
 
@@ -76,7 +89,7 @@ Firms are identified by unique firm reference numbers (FRN). The following is a 
 
 **NOTE:** The abbreviations "CF" and "AR" refer to "controlled functions" and "appointed representatives" respectively.
 
-## Individuals
+### Requests - Individuals
 
 Individuals associated with firms are identified by unique individual reference numbers (IRN). and the following is a table summarising individual-specific API endpoints.
 
@@ -88,7 +101,7 @@ Individuals associated with firms are identified by unique individual reference 
 
 **NOTE:** The abbreviation "CF" refers to "controlled functions".
 
-## Funds
+### Requests - Funds
 
 Funds are identified by unique product reference numbers (PRN). The following is a table summarising fund-specific API endpoints:
 
@@ -98,36 +111,36 @@ Funds are identified by unique product reference numbers (PRN). The following is
 | `/V0.1/CIS/{PRN}/Names`   | PRN (str)  | GET            |
 | `/V0.1/CIS/{PRN}/Subfund` | PRN (str)  | GET            |
 
-## Common Search
+### Requests - Common Search
 
-The common search API endpoint has the following structure:
+The common search API endpoint has the following request structure:
 ```http
-/V0.1/CommonSearch?q=<query>&type=<entity type>
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=<query>&type=<entity type> HTTP/1.1
 ```
-where `<query>` is a substring of the name of a firm, individual or fund, of interest, and `<entity type>` should indicate whether the query refers to a firm (`"firm"`), individual (`"individual"`), or fund (`"fund"`). For example, here are a few valid common search requests:
+where `<query>` is a value of the parameter `'q'` and should be substring of the name of a firm, individual or fund, of interest, and `<entity type>` is the value of the parameter `'type'` and should should indicate whether the query refers to a firm (`'firm'`), individual (`'individual'`), or fund (`'fund'`). For example, here are a few valid common search requests:
 ```http
-GET /V0.1/CommonSearch?q=Barclays+Bank+plc&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Hastings+Direct&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Natwest&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Mark+Carney&type=individual HTTP/1.1
-GET /V0.1/CommonSearch?q=John+Smith&type=individual HTTP/1.1
-GET /V0.1/CommonSearch?q=Jupiter+Asia+Pacific+Income&type=fund HTTP/1.1
-GET /V0.1/CommonSearch?q=abrdn+multi-asset+fund&type=fund HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Barclays+Bank+plc&type=firm HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Hastings+Direct&type=firm HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Natwest&type=firm HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Mark+Carney&type=individual HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=John+Smith&type=individual HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Jupiter+Asia+Pacific+Income&type=fund HTTP/1.1
+GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=abrdn+multi-asset+fund&type=fund HTTP/1.1
 ```
 
-# Getting Started
+## Getting Started
 
-Currently, `fsrapiclient` only uses the [`requests`](https://requests.readthedocs.io/en/latest/) library (and its dependencies). All you need to get started is a simple `pip install`:
+All you need is a simple `pip install`:
 ```bash
 pip install fsrapiclient
 ```
-which will install all the dependencies.
+This will install all the dependencies, which are currently limited to [`requests`](https://requests.readthedocs.io/en/latest/) (and its dependencies). There is a [`requirements.txt`](requirements.txt) file provided if needed; it is auto-generated by PDM, and is not meant to be edited.
 
-Note that you first need to [register](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#) with the FS Register, and get your API key.
+Note that you first need to [register](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#)on the FS Register developer portal, and get your API key.
 
-If you're interested in contributing see the [contributions guidelines](CONTRIBUTING.md).
+If you're interested in contributing to the project see the [contributions guidelines](CONTRIBUTING.md).
 
-# Usage
+## Usage
 
 Import the FS Register client `fsrapiclient.api.FsrApiClient`, and create an instance using the signup email, which is the API username, and the API key:
 ```python
@@ -137,7 +150,7 @@ Import the FS Register client `fsrapiclient.api.FsrApiClient`, and create an ins
 <fsrapiclient.api.FsrApiClient at 0x113c10800>
 ```
 
-Each client instance maintains its own API session (`fsrapiclient.api.FsrApiSession`) state:
+Each client instance maintains its own API session state (`fsrapiclient.api.FsrApiSession`):
 ```python
 >>> client.api_session
 <fsrapiclient.api.FsrApiSession at 0x113392060>
@@ -145,11 +158,11 @@ Each client instance maintains its own API session (`fsrapiclient.api.FsrApiSess
 storing the API username (signup email) and API key. These, and also the API version, are available as properties:
 ```python
 >>> client.api_session.api_username
-<signup email>
+'<signup email>'
 >>> client.api_session.api_key
-<API key>
+'<API key>'
 >>> client.api_version
-V0.1
+'V0.1'
 ```
 
 All public client methods return `fsrapiclient.api.FsrApiResponse` objects, which have four properties specific to the FS Register API:
@@ -164,11 +177,13 @@ As `fsrapiclient.api.FsrApiResponse` is a subclass of [`requests.Response`](http
 >>> res = client.get_firm('805574')
 >>> res.request
 <PreparedRequest [GET]>
+>>> res.request.ok
+True
 >>> res.request.headers
 {'Accept': 'application/json', 'X-Auth-Email': '<API key>', 'X-Auth-Key': '<API username>', 'Cookie': 'CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1'}
 ```
 
-## Common Search
+### Common Search
 
 The common search endpoint can be used via the `FsrApiClient.common_search` method to make generic queries for firms, individuals, or funds. It requires an URL-encoded string of the form:
 ```bash
@@ -198,7 +213,7 @@ from urllib.parse import urlencode
   'Type of business or Individual': 'Individual',
   'Name': 'Mark Carney'}] 
 #
->>> client.common_search(urlencode({'q': 'jupiter asia pacific income', 'type': 'fund'}))
+>>> client.common_search(urlencode({'q': 'jupiter asia pacific income', 'type': 'fund'})).fsr_data
 [{'URL': 'https://register.fca.org.uk/services/V0.1/CIS/635641',
   'Status': 'Recognised',
   'Reference Number': '635641',
@@ -211,9 +226,9 @@ The response data as stored in the `fsr_data` property might be non-empty or emp
 # Null
 ```
 
-## Searching for FRNs, IRNs and PRNs
+### Searching for FRNs, IRNs and PRNs
 
-Generally, firm reference numbers (FRN), individual reference numbers (IRN), and product reference numbers (PRN), may not be known in advance. These can be found via the following client search methods:
+Generally, firm reference numbers (FRN), individual reference numbers (IRN), and product reference numbers (PRN), may not be known in advance. These can be found via the following client search methods, which returns strings if the searches are successful:
 
 * `search_frn`
 * `search_irn`
@@ -230,7 +245,7 @@ Imprecise names in the search can produce multiple records, and will trigger an 
 >>> client.search_frn('hiscox')
 FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
 ```
-In this case the exception was generated because a common search for `"hiscox"` shows that there are multiple firm entries featuring the name `"Hiscox"``:
+In this case the exception was generated because a common search for `'hiscox'` shows that there are multiple firm entries containing this name fragment:
 ```python
 >>> client.common_search(urlencode({'q': 'hiscox', 'type': 'firm'})).fsr_data
 [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/812274',
@@ -258,10 +273,14 @@ A few examples are given below of IRN searches.
 'MXC29012'
 #
 >>> client.search_irn('mark c')
-FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint
+Traceback (most recent call last):
+...
+fsrapiclient.api.FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint
 #
 >>> client.search_irn('a nonexistent individual')
-FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
+Traceback (most recent call last):
+...
+fsrapiclient.api.FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 ```
 
 A few examples are given below of PRN searches.
@@ -269,13 +288,17 @@ A few examples are given below of PRN searches.
 >>> client.search_prn('jupiter asia pacific income')
 '635641'
 #
->>> client.search('jupiter asia')
-FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
+>>> client.search_prn('jupiter asia')
+Traceback (most recent call last):
+...
+fsrapiclient.api.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
 #
->>> client.search_frn('a nonexistent fund')
-FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
+>>> client.search_prn('a nonexistent fund')
+Traceback (most recent call last):
+...
+fsrapiclient.api.FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 ```
-## Firms
+### Firms
 
 Firm-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
@@ -332,7 +355,7 @@ Examples are given below for Barclays Bank Plc.
   'Organisation Name': 'Barclays Bank Plc',
   'FRN': '122702'}]
 #
->>> client.get_firm_addresses('122702')
+>>> client.get_firm_addresses('122702').fsr_data
 [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Address?Type=PPOB',
   'Website Address': 'www.barclays.com',
   'Phone Number': '+442071161000',
@@ -419,7 +442,7 @@ Examples are given below for Barclays Bank Plc.
     'Permissions': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Passports/GIBRALTAR/Permission',
     'Country': 'GIBRALTAR'}]}]
 #
->>> client.get_firm_passport_permissions('122702', 'Gibraltar')
+>>> client.get_firm_passport_permissions('122702', 'Gibraltar').fsr_data
 [{'Permissions': [{'Name': '*  - additional MiFID services and activities subject to mutual recognition under the BCD',
     'InvestmentTypes': []},
 ...
@@ -458,7 +481,7 @@ Examples are given below for Barclays Bank Plc.
   'Financial Promotions Requirement': 'TRUE',
   'Financial Promotions Investment Types': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Requirements/OR-0262545/InvestmentTypes'}]
 #
->>> client.get_firm_requirement_investment_types('122702').fsr_data
+>>> client.get_firm_requirement_investment_types('122702', 'OR-0262545').fsr_data
 [{'Investment Type Name': 'Certificates representing certain securities'},
  {'Investment Type Name': 'Debentures'},
  {'Investment Type Name': 'Government and public security'},
@@ -475,7 +498,7 @@ Examples are given below for Barclays Bank Plc.
   'Rule_ArticleNo': ['Perm & Wav - CRR Ru 2.2']}]
 ```
 
-## Individuals
+### Individuals
 
 Individual-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
@@ -497,7 +520,7 @@ Some examples are given below.
   'Workplace Location 1': {'Firm Name': 'TSB Bank plc',
    'Location 1': 'Liverpool'}}]
 #
->>> client.get_individual_controlled_functions('MXC29012')
+>>> client.get_individual_controlled_functions('MXC29012').fsr_data
 [{'Previous': {'(5)Appointed representative dealing with clients for which they require qualification': {'Customer Engagement Method': 'Face To Face; Telephone; Online',
     'End Date': '05/04/2022',
     'Suspension / Restriction End Date': '',
@@ -517,11 +540,11 @@ Some examples are given below.
     'Name': 'The London Institute of Banking and Finance (LIBF) - formerly known as IFS',
     'URL': 'https://register.fca.org.uk/services/V0.1/Firm/570073'}}}]
 #
->>> client.get_individual_disciplinary_history('MXC29012')
+>>> client.get_individual_disciplinary_history('MXC29012').fsr_data
 # None
 ```
 
-## Funds
+### Funds
 
 Fund-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
