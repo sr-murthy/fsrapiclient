@@ -13,9 +13,9 @@
 
 A lightweight Python client library for the [UK Financial Services Register (FS Register)](https://register.fca.org.uk/s/) [RESTful API](https://register.fca.org.uk/Developer/s/).
 
-The FS Register is a **public** database of all firms, individuals and other entities that are currently, or have been previously, authorised by the [UK Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulatory Authority (PRA)](http://bankofengland.co.uk/pra).
+The FS Register is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the [UK Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulatory Authority (PRA)](http://bankofengland.co.uk/pra).
 
-**NOTE #1:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves signing up with an email, which is used as the API username in requests, and some personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
+**NOTE #1:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
 
 **NOTE #2:** The author has no current or previous affiliation with either the FCA or PRA.
 
@@ -27,13 +27,13 @@ The `fsrapiclient` functionality reflects the structure and properties of the cu
 * **individuals** - individuals associated or affiliated with authorised firms, either currently or previously
 * **funds** - funds or collective investment schemes (CIS), including subfunds of funds
 
-There is also a **common search** API endpoint that allows a search for any of these resources by name or namelike-substring and a corresponding type specification (firm, individual, or fund).
+There is also a **common search** API endpoint that allows a search for any of these resources by name substring and a corresponding type specification (firm, individual, or fund).
 
 These are described in a bit more detail below.
 
 ## Firms
 
-Firms are identified by unique firm reference numbers (FRN). The following is a table summarising firm-specific API endpoints:
+Firms are identified by unique firm reference numbers (FRN). The following is a table summarising firm-specific API endpoints.
 
 | API endpoint                                             | Parameters                             |
 |----------------------------------------------------------|----------------------------------------|
@@ -57,7 +57,7 @@ Firms are identified by unique firm reference numbers (FRN). The following is a 
 
 ## Individuals
 
-Individuals associated with firms are identified by unique individual reference numbers (IRN). and the following is a table summarising individual-specific API endpoints.
+Individuals associated with firms are identified by unique individual reference numbers (IRN). The following is a table summarising individual-specific API endpoints.
 
 | API endpoint                                  | Parameters |
 |-----------------------------------------------|------------|
@@ -69,7 +69,7 @@ Individuals associated with firms are identified by unique individual reference 
 
 ## Funds
 
-Funds are identified by unique product reference numbers (PRN). The following is a table summarising fund-specific API endpoints:
+Funds are identified by unique product reference numbers (PRN). The following is a table summarising fund-specific API endpoints.
 
 | API endpoint              | Parameters |
 |---------------------------|------------|
@@ -104,7 +104,7 @@ which will install all the dependencies.
 
 Note that you first need to [register](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#) with the FS Register, and get your API key.
 
-If you're interested in contributing see the [contributions guidelines](CONTRIBUTING.md).
+If you're interested in contributing see the [contributing guidelines](CONTRIBUTING.md).
 
 # Usage
 
