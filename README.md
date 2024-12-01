@@ -6,12 +6,6 @@
 [![pdm-managed](https://img.shields.io/badge/pdm-managed-blueviolet)](https://pdm-project.org)
 [![License: MPL
 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
-<a href="https://trackgit.com">
-<img src="https://us-central1-trackgit-analytics.cloudfunctions.net/token/ping/m45fbfbm6zgkqmfudv6m" alt="trackgit-views" />
-</a>
-[![PyPI version](https://img.shields.io/pypi/v/fsrapiclient?logo=python&color=41bb13)](https://pypi.org/project/fsrapiclient)
-
-![PyPI Downloads](https://static.pepy.tech/badge/fsrapiclient)
 
 </div>
 
@@ -19,17 +13,15 @@
 
 A lightweight Python client library for the [UK Financial Services Register (FS Register)](https://register.fca.org.uk/s/) [RESTful API](https://register.fca.org.uk/Developer/s/).
 
-The FS Register is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the [UK Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulation Authority (PRA)](http://bankofengland.co.uk/pra).
+The FS Register is a **public** database of all firms, individuals and other entities that are currently, or have been previously, authorised by the [UK Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulatory Authority (PRA)](http://bankofengland.co.uk/pra).
 
-**NOTE #:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
+**NOTE #1:** The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves signing up with an email, which is used as the API username in requests, and some personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
 
-**NOTE #:** The author has no current or previous affiliation with either the FCA or PRA.
+**NOTE #2:** The author has no current or previous affiliation with either the FCA or PRA.
 
 # The FS Register API
 
-The `fsrapiclient` functionality reflects the structure and properties of the current FS Register API (V0.1). The API is [documented](https://register.fca.org.uk/Developer/s/) but requires registration.
-
-There are three main categories of resource about which information can be requested from the register via API endpoints:
+The `fsrapiclient` functionality reflects the structure and properties of the current FS Register API (V0.1). There are three main categories of resource about which information can be requested from the register via API endpoints:
 
 * **firms** - authorised firms (either currently or previously authorised)
 * **individuals** - individuals associated or affiliated with authorised firms, either currently or previously
@@ -37,36 +29,29 @@ There are three main categories of resource about which information can be reque
 
 There is also a **common search** API endpoint that allows a search for any of these resources by name or namelike-substring and a corresponding type specification (firm, individual, or fund).
 
-All possible API requests are `GET` requests, and requests must include headers containing the API username and key:
-```http
-Accept: application/json
-X-Auth-Email: <signup email / API username>
-X-Auth-Key: <API key>
-```
-
 These are described in a bit more detail below.
 
 ## Firms
 
 Firms are identified by unique firm reference numbers (FRN). The following is a table summarising firm-specific API endpoints:
 
-| API endpoint                                             | Parameters                             | Request Method |
-|----------------------------------------------------------|----------------------------------------|----------------|
-| `/V0.1/Firm/{FRN}`                                       | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Address`                               | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/AR`                                    | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/CF`                                    | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/DisciplinaryHistory`                   | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Exclusions`                            | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Individuals`                           | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Names`                                 | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Passports`                             | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Passports/{Country}/Permission`        | FRN (str), Country (str)               | GET            |
-| `/V0.1/Firm/{FRN}/Permissions`                           | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Regulators`                            | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Requirements`                          | FRN (str)                              | GET            |
-| `/V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes` | FRN (str), Requirement Reference (str) | GET            |
-| `/V0.1/Firm/{FRN}/Waiver`                                | FRN (str)                              | GET            |
+| API endpoint                                             | Parameters                             |
+|----------------------------------------------------------|----------------------------------------|
+| `/V0.1/Firm/{FRN}`                                       | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Address`                               | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/AR`                                    | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/CF`                                    | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/DisciplinaryHistory`                   | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Exclusions`                            | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Individuals`                           | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Names`                                 | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Passports`                             | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Passports/{Country}/Permission`        | FRN (str), Country (str)               |
+| `/V0.1/Firm/{FRN}/Permissions`                           | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Regulators`                            | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Requirements`                          | FRN (str)                              |
+| `/V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes` | FRN (str), Requirement Reference (str) |
+| `/V0.1/Firm/{FRN}/Waiver`                                | FRN (str)                              |
 
 **NOTE:** The abbreviations "CF" and "AR" refer to "controlled functions" and "appointed representatives" respectively.
 
@@ -74,11 +59,11 @@ Firms are identified by unique firm reference numbers (FRN). The following is a 
 
 Individuals associated with firms are identified by unique individual reference numbers (IRN). and the following is a table summarising individual-specific API endpoints.
 
-| API endpoint                                  | Parameters | Request Method |
-|-----------------------------------------------|------------|----------------|
-| `/V0.1/Individuals/{IRN}`                     | IRN (str)  | GET            |
-| `/V0.1/Individuals/{IRN}/CF`                  | IRN (str)  | GET            |
-| `/V0.1/Individuals/{IRN}/DisciplinaryHistory` | IRN (str)  | GET            |
+| API endpoint                                  | Parameters |
+|-----------------------------------------------|------------|
+| `/V0.1/Individuals/{IRN}`                     | IRN (str)  |
+| `/V0.1/Individuals/{IRN}/CF`                  | IRN (str)  |
+| `/V0.1/Individuals/{IRN}/DisciplinaryHistory` | IRN (str)  |
 
 **NOTE:** The abbreviation "CF" refers to "controlled functions".
 
@@ -86,11 +71,11 @@ Individuals associated with firms are identified by unique individual reference 
 
 Funds are identified by unique product reference numbers (PRN). The following is a table summarising fund-specific API endpoints:
 
-| API endpoint              | Parameters | Request Method |
-|---------------------------|------------|----------------|
-| `/V0.1/CIS/{PRN}`         | PRN (str)  | GET            |
-| `/V0.1/CIS/{PRN}/Names`   | PRN (str)  | GET            |
-| `/V0.1/CIS/{PRN}/Subfund` | PRN (str)  | GET            |
+| API endpoint              | Parameters |
+|---------------------------|------------|
+| `/V0.1/CIS/{PRN}`         | PRN (str)  |
+| `/V0.1/CIS/{PRN}/Names`   | PRN (str)  |
+| `/V0.1/CIS/{PRN}/Subfund` | PRN (str)  |
 
 ## Common Search
 
@@ -100,13 +85,13 @@ The common search API endpoint has the following structure:
 ```
 where `<query>` is a substring of the name of a firm, individual or fund, of interest, and `<entity type>` should indicate whether the query refers to a firm (`"firm"`), individual (`"individual"`), or fund (`"fund"`). For example, here are a few valid common search requests:
 ```http
-GET /V0.1/CommonSearch?q=Barclays+Bank+plc&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Hastings+Direct&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Natwest&type=firm HTTP/1.1
-GET /V0.1/CommonSearch?q=Mark+Carney&type=individual HTTP/1.1
-GET /V0.1/CommonSearch?q=John+Smith&type=individual HTTP/1.1
-GET /V0.1/CommonSearch?q=Jupiter+Asia+Pacific+Income&type=fund HTTP/1.1
-GET /V0.1/CommonSearch?q=abrdn+multi-asset+fund&type=fund HTTP/1.1
+/V0.1/CommonSearch?q=Barclays+Bank+plc&type=firm
+/V0.1/CommonSearch?q=Hastings+Direct&type=firm
+/V0.1/CommonSearch?q=Natwest&type=firm
+/V0.1/CommonSearch?q=Mark+Carney&type=individual
+/V0.1/CommonSearch?q=John+Smith&type=individual
+/V0.1/CommonSearch?q=Jupiter+Asia+Pacific+Income&type=fund
+/V0.1/CommonSearch?q=abrdn+multi-asset+fund&type=fund
 ```
 
 # Getting Started
@@ -146,21 +131,12 @@ storing the API username (signup email) and API key. These, and also the API ver
 V0.1
 ```
 
-All public client methods return `fsrapiclient.api.FsrApiResponse` objects, which have four properties specific to the FS Register API:
+Almost client methods return an `fsrapiclient.api.FsrApiResponse` object, which has four properties specific to the FS Register API:
 
 * `fsr_status` - an FS Register-specific status indicator for the request
 * `fsr_message` - an FS Register-specific status message for the request
 * `fsr_data` - the response data
 * `fsr_resultinfo` - pagination information for the response data
-
-As `fsrapiclient.api.FsrApiResponse` is a subclass of [`requests.Response`](https://requests.readthedocs.io/en/latest/api/#requests.Response), request information can be obtained from the `.request` attribute, e.g.
-```python
->>> res = client.get_firm('805574')
->>> res.request
-<PreparedRequest [GET]>
->>> res.request.headers
-{'Accept': 'application/json', 'X-Auth-Email': '<API key>', 'X-Auth-Key': '<API username>', 'Cookie': 'CookieConsentPolicy=0:1; LSKey-c$CookieConsentPolicy=0:1'}
-```
 
 ## Common Search
 
@@ -171,7 +147,6 @@ q=<query string>&type=<entity type>
 Use [`urlencode.parse.urlencode`](https://docs.python.org/3/library/urllib.parse.html#urllib.parse.urlencode) to do the URL-encoding. Some examples are given below.
 ```python
 from urllib.parse import urlencode
-#
 >>> client.common_search(urlencode({'q': 'barclays bank', 'type': 'firm'})).fsr_data
 [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/759676',
   'Status': 'Authorised',
@@ -184,14 +159,12 @@ from urllib.parse import urlencode
  'Reference Number': '122702',
  'Type of business or Individual': 'Firm',
  'Name': 'Barclays Bank Plc (Postcode: E14 5HP)'}]
-#
 >>> client.common_search(urlencode({'q': 'mark carney', 'type': 'individual'})).fsr_data
 [{'URL': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012',
   'Status': 'Active',
   'Reference Number': 'MXC29012',
   'Type of business or Individual': 'Individual',
   'Name': 'Mark Carney'}] 
-#
 >>> client.common_search(urlencode({'q': 'jupiter asia pacific income', 'type': 'fund'}))
 [{'URL': 'https://register.fca.org.uk/services/V0.1/CIS/635641',
   'Status': 'Recognised',
@@ -250,10 +223,8 @@ A few examples are given below of IRN searches.
 ```python
 >>> client.search_irn('mark carney')
 'MXC29012'
-#
 >>> client.search_irn('mark c')
 FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint
-#
 >>> client.search_irn('a nonexistent individual')
 FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 ```
@@ -262,10 +233,8 @@ A few examples are given below of PRN searches.
 ```python
 >>> client.search_prn('jupiter asia pacific income')
 '635641'
-#
 >>> client.search('jupiter asia')
 FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
-#
 >>> client.search_frn('a nonexistent fund')
 FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 ```
@@ -273,23 +242,23 @@ FsrApiResponseException: No data found in FSR API response. Please check the sea
 
 Firm-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
-| Method                                  | API endpoint                                             | Request Method | Parameters                             | Return           |
-|-----------------------------------------|----------------------------------------------------------|----------------|----------------------------------------|------------------|
-| `get_firm`                              | `/V0.1/Firm/{FRN}`                                       | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_addresses`                    | `/V0.1/Firm/{FRN}/Address`                               | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_appointed_representatives`    | `/V0.1/Firm/{FRN}/AR`                                    | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_controlled_functions`         | `/V0.1/Firm/{FRN}/CF`                                    | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_disciplinary_history`         | `/V0.1/Firm/{FRN}/DisciplinaryHistory`                   | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_exclusions`                   | `/V0.1/Firm/{FRN}/Exclusions`                            | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_individuals`                  | `/V0.1/Firm/{FRN}/Individuals`                           | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_names`                        | `/V0.1/Firm/{FRN}/Names`                                 | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_passports`                    | `/V0.1/Firm/{FRN}/Passports`                             | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_passport_permissions`         | `/V0.1/Firm/{FRN}/Passports/{Country}/Permission`        | `GET`          | FRN (str), Country (str)               | `FsrApiResponse` |
-| `get_firm_permissions`                  | `/V0.1/Firm/{FRN}/Permissions`                           | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_regulators`                   | `/V0.1/Firm/{FRN}/Regulators`                            | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_requirements`                 | `/V0.1/Firm/{FRN}/Requirements`                          | `GET`          | FRN (str)                              | `FsrApiResponse` |
-| `get_firm_requirement_investment_types` | `/V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes` | `GET`          | FRN (str), Requirement Reference (str) | `FsrApiResponse` |
-| `get_firm_waivers`                      | `/V0.1/Firm/{FRN}/Waiver`                                | `GET`          | FRN (str)                              | `FsrApiResponse` |
+| Method                                  | API endpoint                                             | Parameters                             | Return           |
+|-----------------------------------------|----------------------------------------------------------|----------------------------------------|------------------|
+| `get_firm`                              | `/V0.1/Firm/{FRN}`                                       | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_addresses`                    | `/V0.1/Firm/{FRN}/Address`                               | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_appointed_representatives`    | `/V0.1/Firm/{FRN}/AR`                                    | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_controlled_functions`         | `/V0.1/Firm/{FRN}/CF`                                    | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_disciplinary_history`         | `/V0.1/Firm/{FRN}/DisciplinaryHistory`                   | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_exclusions`                   | `/V0.1/Firm/{FRN}/Exclusions`                            | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_individuals`                  | `/V0.1/Firm/{FRN}/Individuals`                           | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_names`                        | `/V0.1/Firm/{FRN}/Names`                                 | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_passports`                    | `/V0.1/Firm/{FRN}/Passports`                             | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_passport_permissions`         | `/V0.1/Firm/{FRN}/Passports/{Country}/Permission`        | FRN (str), Country (str)               | `FsrApiResponse` |
+| `get_firm_permissions`                  | `/V0.1/Firm/{FRN}/Permissions`                           | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_regulators`                   | `/V0.1/Firm/{FRN}/Regulators`                            | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_requirements`                 | `/V0.1/Firm/{FRN}/Requirements`                          | FRN (str)                              | `FsrApiResponse` |
+| `get_firm_requirement_investment_types` | `/V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes` | FRN (str), Requirement Reference (str) | `FsrApiResponse` |
+| `get_firm_waivers`                      | `/V0.1/Firm/{FRN}/Waiver`                                | FRN (str)                              | `FsrApiResponse` |
 
 Examples are given below for Barclays Bank Plc.
 ```python
@@ -325,7 +294,6 @@ Examples are given below for Barclays Bank Plc.
   'Business Type': 'Regulated',
   'Organisation Name': 'Barclays Bank Plc',
   'FRN': '122702'}]
-#
 >>> client.get_firm_addresses('122702')
 [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Address?Type=PPOB',
   'Website Address': 'www.barclays.com',
@@ -352,7 +320,6 @@ Examples are given below for Barclays Bank Plc.
   'Address Line 1': '1234 Pavilion Drive',
   'Individual': '',
   'Address Type': 'Complaints Contact'}]
-#
 >>> client.get_firm_controlled_functions('122702').fsr_data
 [{'Current': {'(6707)SMF4 Chief Risk': {'Suspension / Restriction End Date': '',
     'Suspension / Restriction Start Date': '',
@@ -370,7 +337,6 @@ Examples are given below for Barclays Bank Plc.
     'Individual Name': 'Lynne Atkin',
     'Name': '[PRA CF] Significant risk taker or Material risk taker',
     'URL': 'https://register.fca.org.uk/services/V0.1/Individuals/LAA01049'}}}]
-#
 >>> client.get_firm_disciplinary_history('122702').fsr_data
 [{'TypeofDescription': "On 19 August 2009, the FSA imposed a penalty on Barclays Bank plc and Barclays Capital Securities Limited (Barclays) of £2,450,000 (discounted from £3,500,000 for early settlement) in respect of breaches of SUP 17 of the FSA Handbook and breaches of Principles 2 and 3 of the FSA's Principles for Businesses which occurred between 1 October 2006 and 31 October 2008. The breach of SUP 17 related to Barclays failure to submit accurate transaction reports as required in respect of an estimated 57.5 million transactions. Barclays breached Principle 2 by failing to conduct its business with due skill, care and diligence in failing to respond sufficiently to opportunities to review the adequacy of its transaction reporting systems. Barclays breached Principle 3 by failing to take reasonable care to organise and control its affairs responsibly and effectively, with adequate risk management systems, to meet the requirements to submit accurate transaction reports to the FSA",
   'TypeofAction': 'Fines',
@@ -381,12 +347,10 @@ Examples are given below for Barclays Bank Plc.
   'TypeofAction': 'Fines',
   'EnforcementType': 'FSMA',
   'ActionEffectiveFrom': '23/09/2022'}]
-#
 >>> client.get_firm_exclusions('122702').fsr_data
 [{'PSD2_Exclusion_Type': 'Limited Network Exclusion',
   'Particular_Exclusion_relied_upon': '2(k)(iii) – may be used only to acquire a very limited range of goods or services',
   'Description_of_services': 'Precision pay Virtual Prepaid - DVLA Service'}]
-#
 >>> client.get_firm_individuals('122702').fsr_data
 [{'Status': 'Approved by regulator',
   'URL': 'https://register.fca.org.uk/services/V0.1/Individuals/BXC00280',
@@ -397,7 +361,6 @@ Examples are given below for Barclays Bank Plc.
   'URL': 'https://register.fca.org.uk/services/V0.1/Individuals/TXW00011',
   'IRN': 'TXW00011',
   'Name': 'Herbert Wright'}]
-#
 >>> client.get_firm_names('122702').fsr_data
 [{'Current Names': [{'Effective From': '17/05/2013',
     'Status': 'Trading',
@@ -407,12 +370,10 @@ Examples are given below for Barclays Bank Plc.
     'Effective From': '08/03/2004',
     'Status': 'Trading',
     'Name': 'Banca Woolwich'}]}]
-#
 >>> client.get_firm_passports('122702').fsr_data
 [{'Passports': [{'PassportDirection': 'Passporting Out',
     'Permissions': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Passports/GIBRALTAR/Permission',
     'Country': 'GIBRALTAR'}]}]
-#
 >>> client.get_firm_passport_permissions('122702', 'Gibraltar')
 [{'Permissions': [{'Name': '*  - additional MiFID services and activities subject to mutual recognition under the BCD',
     'InvestmentTypes': []},
@@ -423,14 +384,12 @@ Examples are given below for Barclays Bank Plc.
   'PassportDirection': 'Passporting Out',
   'Directive': 'Insurance Distribution',
   'Country': 'GIBRALTAR'}]
-#
 >>> client.get_firm_permissions('122702').fsr_data
 {'Debt Adjusting': [{'Limitation': ['This permission is limited to debt adjusting with no debt management activity']}],
  'Credit Broking': [{'Limitation Not Found': ['Valid limitation not present']}],
  ...
   'Accepting Deposits': [{'Customer Type': ['All']},
   {'Investment Type': ['Deposit']}]}
-#
 >>> client.get_firm_regulators('122702').fsr_data
 [{'Termination Date': '',
   'Effective Date': '01/04/2013',
@@ -439,7 +398,6 @@ Examples are given below for Barclays Bank Plc.
  {'Termination Date': '30/11/2001',
   'Effective Date': '25/11/1993',
   'Regulator Name': 'Securities and Futures Authority'}]
-#
 >>> client.get_firm_requirements('122702').fsr_data
 [{'Effective Date': '23/03/2020',
   'Written Notice - Market Risk Consolidation': 'REQUIREMENTS RELEVANT TO THE MARKET RISK CONSOLIDATION PERMISSION THAT THE FIRM HAS SOUGHT AND THE PRA IMPOSES UNDER SECTION 55M (5) OF THE ACT 1.This Market Risk Consolidation Permission applies to an institution or undertaking listed in Table 1 only for as long as it remains part of the Barclays Group. The firm must notify the PRA promptly if any of those institutions or undertakings ceases to be part of the Barclays Group. 2.The firm must, no later than 23 business days after the end of each quarter, ending March, June, September and December submit, in respect of that quarter, a report to the PRA highlighting the capital impact of market risk consolidation for each of the institutions listed in Table 1. 3.The firm must: 1.ensure that any existing legal agreements or arrangements necessary for fulfilment of the conditions of Article 325(2) of the CRR as between any of the institutions in Table 1 are maintained; and 2.notify the PRA of any variation in the terms of such agreements, or of any change in the relevant legal or regulatory framework of which it becomes aware and which may have an impact on the ability of any of the institutions listed in Table 1 to meet the conditions of Article 325(2) of the CRR. THE MARKET RISK CONSOLIDATION PERMISSION Legal Entities 1.The Market Risk Consolidation Permission means that the firm may use positions in an institution or undertaking listed in Table 1 to offset positions in another institution or undertaking listed therein only for the purposes of calculating net positions and own funds requirements in accordance with Title IV of the CRR on a consolidated basis. Table 1 Institutions and Location of undertaking: Barclays Bank PLC (BBPLC) - UK Barclays Capital Securities Limited (BCSL) UK Barclays Bank Ireland - Ireland',
@@ -451,14 +409,12 @@ Examples are given below for Barclays Bank Plc.
   'Requirement Reference': 'OR-0262545',
   'Financial Promotions Requirement': 'TRUE',
   'Financial Promotions Investment Types': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Requirements/OR-0262545/InvestmentTypes'}]
-#
 >>> client.get_firm_requirement_investment_types('122702').fsr_data
 [{'Investment Type Name': 'Certificates representing certain securities'},
  {'Investment Type Name': 'Debentures'},
  {'Investment Type Name': 'Government and public security'},
  {'Investment Type Name': 'Listed shares'},
  {'Investment Type Name': 'Warrants'}]
-#
 >>> client.get_firm_waivers('122702').fsr_data
 [{'Waivers_Discretions_URL': 'https://register.fca.org.uk/servlet/servlet.FileDownload?file=00P0X00001YXBw1UAH',
   'Waivers_Discretions': 'A4823494P.pdf',
@@ -473,11 +429,11 @@ Examples are given below for Barclays Bank Plc.
 
 Individual-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
-| Method                                | API endpoint                                  | Request Method | Parameters | Return           |
-|-------------------------------------- |-----------------------------------------------|----------------|------------|------------------|
-| `get_individual`                      | `/V0.1/Individuals/{IRN}`                     | `GET`          | IRN (str)  | `FsrApiResponse` |
-| `get_individual_controlled_functions` | `/V0.1/Individuals/{IRN}/CF`                  | `GET`          | IRN (str)  | `FsrApiResponse` |
-| `get_individual_disciplinary_history` | `/V0.1/Individuals/{IRN}/DisciplinaryHistory` | `GET`          | IRN (str)  | `FsrApiResponse` |
+| Method                                | API endpoint                                  | Parameters | Return           |
+|-------------------------------------- |-----------------------------------------------|------------|------------------|
+| `get_individual`                      | `/V0.1/Individuals/{IRN}`                     | IRN (str)  | `FsrApiResponse` |
+| `get_individual_controlled_functions` | `/V0.1/Individuals/{IRN}/CF`                  | IRN (str)  | `FsrApiResponse` |
+| `get_individual_disciplinary_history` | `/V0.1/Individuals/{IRN}/DisciplinaryHistory` | IRN (str)  | `FsrApiResponse` |
 
 Some examples are given below.
 ```python
@@ -490,7 +446,6 @@ Some examples are given below.
    'Full Name': 'Mark Carney'},
   'Workplace Location 1': {'Firm Name': 'TSB Bank plc',
    'Location 1': 'Liverpool'}}]
-#
 >>> client.get_individual_controlled_functions('MXC29012')
 [{'Previous': {'(5)Appointed representative dealing with clients for which they require qualification': {'Customer Engagement Method': 'Face To Face; Telephone; Online',
     'End Date': '05/04/2022',
@@ -510,7 +465,6 @@ Some examples are given below.
     'Firm Name': 'Echo Finance Limited',
     'Name': 'The London Institute of Banking and Finance (LIBF) - formerly known as IFS',
     'URL': 'https://register.fca.org.uk/services/V0.1/Firm/570073'}}}]
-#
 >>> client.get_individual_disciplinary_history('MXC29012')
 # None
 ```
@@ -519,11 +473,11 @@ Some examples are given below.
 
 Fund-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
 
-| Method              | API endpoint              | Request Method | Parameters | Return           |
-|---------------------|---------------------------|----------------|------------|------------------|
-| `get_fund`          | `/V0.1/CIS/{PRN}`         | `GET`          | PRN (str)  | `FsrApiResponse` |
-| `get_fund_names`    | `/V0.1/CIS/{PRN}/Names`   | `GET`          | PRN (str)  | `FsrApiResponse` |
-| `get_fund_subfunds` | `/V0.1/CIS/{PRN}/Subfund` | `GET`          | PRN (str)  | `FsrApiResponse` |
+| Method              | API endpoint              | Parameters | Return           |
+|---------------------|---------------------------|------------|------------------|
+| `get_fund`          | `/V0.1/CIS/{PRN}`         | PRN (str)  | `FsrApiResponse` |
+| `get_fund_names`    | `/V0.1/CIS/{PRN}/Names`   | PRN (str)  | `FsrApiResponse` |
+| `get_fund_subfunds` | `/V0.1/CIS/{PRN}/Subfund` | PRN (str)  | `FsrApiResponse` |
 
 Some examples are given below.
 
@@ -542,7 +496,6 @@ Some examples are given below.
   'Product Type': 'ICVC',
   'ICVC Registration No': 'SI000001',
   'Status': 'Authorised'}]
-#
 >>> client.get_fund_names('185045').fsr_data
 [{'Effective To': '22/08/2019',
   'Effective From': '23/12/1997',
@@ -550,7 +503,6 @@ Some examples are given below.
  {'Effective To': '01/08/2022',
   'Effective From': '23/12/1997',
   'Product Other Name': 'Aberdeen Standard OEIC I'}]
-#
 >>> client.get_fund_subfunds('185045').fsr_data
 [{'URL': 'https://register.fca.org.uk/services/apexrest/V0.1/CIS/185045',
   'Sub-Fund Type': 'Other',
