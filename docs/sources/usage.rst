@@ -31,12 +31,12 @@ storing the API username (signup email) and API key. These, and also the API ver
 
 All public client methods return :py:class:`~fsrapiclient.api.FsrApiResponse` objects, which have four properties specific to the FS Register API:
 
-- ``fsr_status`` - an FS Register-specific status indicator for the
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_status` - an FS Register-specific status indicator for the
   request
-- ``fsr_message`` - an FS Register-specific status message for the
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_message` - an FS Register-specific status message for the
   request
-- ``fsr_data`` - the response data
-- ``fsr_resultinfo`` - pagination information for the response data
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_data` - the response data
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_resultinfo` - pagination information for the response data
 
 As :py:class:`~fsrapiclient.api.FsrApiResponse` is a subclass of :py:class:`requests.Response`, request information can be obtained from the :py:attr:`requests.Response.request` attribute, e.g.
 
