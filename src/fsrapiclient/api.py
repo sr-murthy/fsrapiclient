@@ -185,7 +185,7 @@ class FsrApiResponse(requests.models.Response):
 
 
 class FsrApiClient:
-    """API client for the FS Register API (V1.0).
+    """API client for the FS Register API (V0.1).
 
     Consult the developer documentation for further details on the underlying
     API.
@@ -520,7 +520,7 @@ class FsrApiClient:
         Handler for the top-level firm details API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}
+            /V0.1/Firm/{FRN}
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -555,7 +555,7 @@ class FsrApiClient:
         Handler for the firm names FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Names
+            /V0.1/Firm/{FRN}/Names
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -591,7 +591,7 @@ class FsrApiClient:
         Handler for the firm address details FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Address
+            /V0.1/Firm/{FRN}/Address
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -626,7 +626,7 @@ class FsrApiClient:
         Handler for the firm controlled functions FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/CF
+            /V0.1/Firm/{FRN}/CF
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -661,7 +661,7 @@ class FsrApiClient:
         Handler for the firm individuals FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Individuals
+            /V0.1/Firm/{FRN}/Individuals
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -696,7 +696,7 @@ class FsrApiClient:
         Handler for the firm permissions FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Permissions
+            /V0.1/Firm/{FRN}/Permissions
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -731,7 +731,7 @@ class FsrApiClient:
         Handler for the firm requirements FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Requirements
+            /V0.1/Firm/{FRN}/Requirements
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -766,7 +766,7 @@ class FsrApiClient:
         Handler for the firm requirement investment types FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Requirements/<ReqRef>/InvestmentTypes
+            /V0.1/Firm/{FRN}/Requirements/<ReqRef>/InvestmentTypes
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -802,7 +802,7 @@ class FsrApiClient:
         Handler for the firm regulators FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Regulators
+            /V0.1/Firm/{FRN}/Regulators
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -837,7 +837,7 @@ class FsrApiClient:
         Handler for the firm passports FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Passports
+            /V0.1/Firm/{FRN}/Passports
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -872,7 +872,7 @@ class FsrApiClient:
         Handler for the firm passport permissions FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Requirements/{Country}/Permission
+            /V0.1/Firm/{FRN}/Requirements/{Country}/Permission
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -908,7 +908,7 @@ class FsrApiClient:
         Handler for the firm waivers FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Waivers
+            /V0.1/Firm/{FRN}/Waivers
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -943,7 +943,7 @@ class FsrApiClient:
         Handler for the firm exclusions FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/Exclusions
+            /V0.1/Firm/{FRN}/Exclusions
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -978,7 +978,7 @@ class FsrApiClient:
         Handler for the firm disciplinary history FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/DisciplinaryHistory
+            /V0.1/Firm/{FRN}/DisciplinaryHistory
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -1014,7 +1014,7 @@ class FsrApiClient:
         endpoint:
         ::
 
-            /v1.0/Firm/{FRN}/AR
+            /V0.1/Firm/{FRN}/AR
 
         Returns an ``FsrApiResponse``, which could have data if the FRN exists,
         or null if it not.
@@ -1204,7 +1204,7 @@ class FsrApiClient:
         Handler for top-level individual details API endpoint:
         ::
 
-            /v1.0/Individuals/{IRN}
+            /V0.1/Individuals/{IRN}
 
         Returns an ``FsrApiResponse``, which could have data if the IRN exists,
         or null if it not.
@@ -1239,7 +1239,7 @@ class FsrApiClient:
         Handler for the individual controlled functions FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{IRN}/CF
+            /V0.1/Firm/{IRN}/CF
 
         Returns an ``FsrApiResponse``, which could have data if the IRN exists,
         or null if it not.
@@ -1274,7 +1274,7 @@ class FsrApiClient:
         Handler for the individual disciplinary history FS Register API endpoint:
         ::
 
-            /v1.0/Firm/{IRN}/DisciplinaryHistory
+            /V0.1/Firm/{IRN}/DisciplinaryHistory
 
         Returns an ``FsrApiResponse``, which could have data if the IRN exists,
         or null if it not.
@@ -1467,7 +1467,7 @@ class FsrApiClient:
         Handler for top-level fund details API endpoint:
         ::
 
-            /v1.0/CIS/{PRN}
+            /V0.1/CIS/{PRN}
 
         Returns an ``FsrApiResponse``, which could have data if the PRN exists,
         or null if it not.
@@ -1502,7 +1502,7 @@ class FsrApiClient:
         Handler for top-level fund names API endpoint:
         ::
 
-            /v1.0/CIS/{PRN}/Names
+            /V0.1/CIS/{PRN}/Names
 
         Returns an ``FsrApiResponse``, which could have data if the PRN exists,
         or null if it not.
@@ -1537,7 +1537,7 @@ class FsrApiClient:
         Handler for top-level subfund details API endpoint:
         ::
 
-            /v1.0/CIS/{PRN}/Subfund
+            /V0.1/CIS/{PRN}/Subfund
 
         Returns an ``FsrApiResponse``, which could have data if the PRN exists,
         or null if it not.
