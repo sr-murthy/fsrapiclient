@@ -12,21 +12,21 @@ The base URL for all API requests is:
 
 .. _fs-register-api.resources-and-request-types:
 
-Resources and Request Types
-===========================
+Resources and Endpoints
+=======================
 
 There are three main categories of resource about which information can be requested from the register via API endpoints:
 
-- **firms** - authorised and/or regulated firms (either current or past), or providing regulated products or services
-- **individuals** - individuals associated with the type of firms described above, either current or past
-- **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds
+- **firms** - authorised and/or regulated firms (either current or past), or providing regulated products or services. These are described in more detail :ref:`here <fs-register-api.firm-requests>`.
+- **individuals** - individuals associated with the type of firms described above, either current or past.  These are described in more detail :ref:`here <fs-register-api.individual-requests>`.
+- **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds. These are described in more detail :ref:`here <fs-register-api.fund-requests>`.
 
-There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund).
+There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund). This is described in more detail :ref:`here <fs-register-api.common-search-requests>`.
 
 .. _fs-register-api.request-headers:
 
 Request Headers
----------------
+===============
 
 The FS Register API is read-only - all requests must use ``GET``, and include headers containing the API username and key:
 
@@ -39,7 +39,7 @@ The FS Register API is read-only - all requests must use ``GET``, and include he
 .. _fs-register-api.rate-limiting:
 
 Rate Limiting
--------------
+=============
 
 According to the `API documentation <https://register.fca.org.uk/Developer/s/>`__ **rate limiting** is applied to set a **maximum of 50 requests per 10 seconds per user**, and **breaches** lead to `(HTTP 429) errors <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/429>`__ and **requests being blocked for 1 minute**.
 
@@ -50,9 +50,9 @@ According to the `API documentation <https://register.fca.org.uk/Developer/s/>`_
 .. _fs-register-api.firm-requests:
 
 Firm Requests
--------------
+=============
 
-Firms are identified by unique firm reference numbers (FRN). The following is a table summarising firm-specific API endpoints:
+Firms are identified by unique firm reference numbers (FRN). The following table summarises firm-specific API endpoints.
 
 +-----------------------------------+------------------------+---------+
 | API endpoint                      | Parameters             | Request |
@@ -99,9 +99,9 @@ Firms are identified by unique firm reference numbers (FRN). The following is a 
 .. _fs-register-api.individual-requests:
 
 Individual Requests
--------------------
+===================
 
-Individuals associated with firms are identified by unique individual reference numbers (IRN). and the following is a table summarising individual-specific API endpoints.
+Individuals associated with firms in the FS Register are identified by unique individual reference numbers (IRN). The following table summarises individual-specific API endpoints.
 
 +-------------------------------------------------+------------+----------------+
 | API endpoint                                    | Parameters | Request Method |
@@ -120,9 +120,9 @@ Individuals associated with firms are identified by unique individual reference 
 .. _fs-register-api.fund-requests:
 
 Fund Requests
--------------
+=============
 
-Funds are identified by unique product reference numbers (PRN). The following is a table summarising fund-specific API endpoints:
+Funds, also referred to as collective investment schemes (CIS) in the FS Register, are identified by unique product reference numbers (PRN). The following table summarises fund-specific API endpoints.
 
 =========================== ========== ==============
 API endpoint                Parameters Request Method
@@ -135,7 +135,7 @@ API endpoint                Parameters Request Method
 .. _fs-register-api.common-search-requests:
 
 Common Search Requests
-----------------------
+======================
 
 The common search API endpoint has the following request structure:
 

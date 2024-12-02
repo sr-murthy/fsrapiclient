@@ -22,12 +22,11 @@ A lightweight Python client library for the UK [Financial Services Register (FS 
 The FS Register is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the UK [Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulation Authority (PRA)](http://bankofengland.co.uk/pra).
 
 > [!NOTE]
-> The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile - the API key can be used in request headers to programmatically make requests via any suitable language and library of choice.
+> The FS Register API is free to use but accessing it, including via this library, requires [registration](https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#). Registration involves a free sign up with an email, which is used as the API username in requests, and basic personal information. Once registered an API key is available from your registration profile.
 
 See the [Sphinx documentation](https://fsrapiclient.readthedocs.io) for more details on:
 
 * [understanding the FS Register API](https://fsrapiclient.readthedocs.io/sources/fs-register-api.html)
-* [package installation](https://fsrapiclient.readthedocs.io/sources/getting-started.html)
 * [usage](https://fsrapiclient.readthedocs.io/sources/usage.html)
 * [contributing](https://fsrapiclient.readthedocs.io/sources/contributing.html)
 * [API reference](https://fsrapiclient.readthedocs.io/sources/api-reference.html)

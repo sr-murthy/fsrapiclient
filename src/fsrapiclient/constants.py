@@ -12,7 +12,7 @@ from enum import Enum
 
 
 class FSR_API_CONSTANTS(Enum):
-    """An enum to store FSR API-level constants.
+    """An enum to store FS Register API-level constants.
 
     Examples
     --------
