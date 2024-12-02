@@ -11,7 +11,6 @@
 <img src="https://us-central1-trackgit-analytics.cloudfunctions.net/token/ping/m45fbfbm6zgkqmfudv6m" alt="trackgit-views" />
 </a>
 [![PyPI version](https://img.shields.io/pypi/v/fsrapiclient?logo=python&color=41bb13)](https://pypi.org/project/fsrapiclient)
-
 ![PyPI Downloads](https://static.pepy.tech/badge/fsrapiclient)
 
 </div>
@@ -27,8 +26,8 @@ The FS Register is a **public** database of all firms, individuals, funds, and o
 
 See the [Sphinx documentation](https://fsrapiclient.readthedocs.io) for more details on:
 
-* [installation](https://fsrapiclient.readthedocs.io/sources/getting-started.html)
-* [usage](https://fsrapiclient.readthedocs.io/sources/usage.html)
 * [understanding the FS Register API](https://fsrapiclient.readthedocs.io/sources/fs-register-api.html)
+* [package installation](https://fsrapiclient.readthedocs.io/sources/getting-started.html)
+* [usage](https://fsrapiclient.readthedocs.io/sources/usage.html)
 * [contributing](https://fsrapiclient.readthedocs.io/sources/contributing.html)
 * [API reference](https://fsrapiclient.readthedocs.io/sources/api-reference.html)
