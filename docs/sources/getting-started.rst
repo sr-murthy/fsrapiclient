@@ -27,4 +27,4 @@ A standard :program:`pip` install (with the :code:`-U` "upgrade" option to get t
 
 This will install `requests <https://requests.readthedocs.io/en/latest/>`_ (and its sub-dependencies), as this is currently the only top-level dependency.
 
-If you are interested in contributing please start with the :doc:`contributing guidelines <contributing>`, otherwise you can jump to the :doc:`usage guide <sources/usage>`, or the :doc:`API reference <sources/api-reference>`.
+If you are interested in contributing please start with the :doc:`contributing guidelines <contributing>`, otherwise you can jump to the :doc:`usage guide <usage>`, or the :doc:`API reference <api-reference>`.
