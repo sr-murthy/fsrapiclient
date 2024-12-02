@@ -5,7 +5,7 @@ REPO := https://github.com/sr-murthy/fsrapiclient
 PACKAGE_NAME := fsrapiclient
 BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 HEAD := $(shell git rev-parse --short=8 HEAD)
-PACKAGE_VERSION := $(shell grep __version__ src/__version__.py | cut -d '=' -f 2 | xargs)
+PACKAGE_VERSION := $(shell grep __version__ src/fsrapiclient/__version__.py | cut -d '=' -f 2 | xargs)
 
 PROJECT_ROOT := $(PWD)
 

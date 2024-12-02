@@ -32,9 +32,9 @@ class TestFsrApiSession(_TestFsrApi):
         assert test_session.api_username == self._api_username
         assert test_session.api_key == self._api_key
         assert test_session.headers == {
-            'Accept': 'application/json',
-            'X-Auth-Email': self._api_username,
-            'X-Auth-Key': self._api_key
+            'ACCEPT': 'application/json',
+            'X-AUTH-EMAIL': self._api_username,
+            'X-AUTH-KEY': self._api_key
         }
 
 
@@ -46,9 +46,9 @@ class TestFsrApiClient(_TestFsrApi):
         assert test_client.api_session.api_username == self._api_username
         assert test_client.api_session.api_key == self._api_key
         assert test_client.api_session.headers == {
-            'Accept': 'application/json',
-            'X-Auth-Email': self._api_username,
-            'X-Auth-Key': self._api_key
+            'ACCEPT': 'application/json',
+            'X-AUTH-EMAIL': self._api_username,
+            'X-AUTH-KEY': self._api_key
         }
         assert test_client.api_version == FSR_API_CONSTANTS.API_VERSION.value
 
