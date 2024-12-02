@@ -21,14 +21,14 @@ There are three main categories of resource about which information can be reque
 - **individuals** - individuals associated with the type of firms described above, either current or past
 - **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds
 
-There is also a **common search** API endpoint that allows a search forany of these resources by a name substring and a corresponding type specification (firm, individual, or fund).
+There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund).
 
 .. _fs-register-api.request-headers:
 
 Request Headers
 ---------------
 
-The FS Register API is read-only - all requests must use ``GET``, andinclude headers containing the API username and key:
+The FS Register API is read-only - all requests must use ``GET``, and include headers containing the API username and key:
 
 .. code:: shell
 
