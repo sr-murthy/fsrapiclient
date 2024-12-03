@@ -13,12 +13,21 @@ __all__ = ['FsrApiException',
 
 
 class FsrApiException(Exception):
+    """
+    Base class all FS Register API exceptions.
+    """
     ...
 
 
 class FsrApiRequestException(FsrApiException):
+    """
+    Base class all FS Register API request exceptions.
+    """
     ...
 
 
 class FsrApiResponseException(FsrApiException):
+    """
+    Base class all FS Register API response exceptions.
+    """
     ...

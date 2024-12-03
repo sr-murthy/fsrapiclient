@@ -29,7 +29,7 @@ from fsrapiclient.exceptions import (
 
 
 class FsrApiSession(requests.Session):
-    """A simple ``requests.Session``-based class for an FS Register API session.
+    """A simple :py:class:`requests.Session`-based class for an FS Register API session.
 
     Examples
     --------
@@ -63,7 +63,7 @@ class FsrApiSession(requests.Session):
 
         Examples
         --------
-        >>> import os; from urllib.parse import urlencode
+        >>> import os
         >>> session = FsrApiSession(os.environ['API_USERNAME'], os.environ['API_KEY'])
         >>> assert session.api_username == os.environ['API_USERNAME']
         >>> assert session.api_key == os.environ['API_KEY']
@@ -90,7 +90,7 @@ class FsrApiSession(requests.Session):
 
         Examples
         --------
-        >>> import os; from urllib.parse import urlencode
+        >>> import os
         >>> session = FsrApiSession(os.environ['API_USERNAME'], os.environ['API_KEY'])
         >>> assert session.api_username == os.environ['API_USERNAME']
         """
@@ -107,7 +107,7 @@ class FsrApiSession(requests.Session):
 
         Examples
         --------
-        >>> import os; from urllib.parse import urlencode
+        >>> import os
         >>> session = FsrApiSession(os.environ['API_USERNAME'], os.environ['API_KEY'])
         >>> assert session.api_key == os.environ['API_KEY']
         """
@@ -115,11 +115,11 @@ class FsrApiSession(requests.Session):
 
 
 class FsrApiResponse(requests.models.Response):
-    """A simple ``requests.Response``-based wrapper for FS Register API responses.
+    """A simple :py:class:`requests.Response`-based wrapper for FS Register API responses.
 
     Examples
     --------
-    >>> import os; from urllib.parse import urlencode
+    >>> import os
     >>> client = FsrApiClient(os.environ['API_USERNAME'], os.environ['API_KEY'])
     >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
     >>> res
@@ -128,19 +128,19 @@ class FsrApiResponse(requests.models.Response):
 
     __attrs__ = Response.__attrs__
 
-    def __init__(self, response):
-        """Initialiser requiring a `requests.Response` object.
+    def __init__(self, response: requests.Response) -> None:
+        """Initialiser requiring a :py:class:`requests.Response` object.
 
         Parameters
         ----------
-        response : requests.Response
+        response : :py:class:`requests.Response`
             The response from the original request.
         """    
         self.__dict__.update(**response.__dict__)
 
     @property
     def fsr_status(self) -> str:
-        """:py:class:`str`: The FS Register status code from the original request.
+        """:py:class:`str`: The FS Register status code of the response.
 
         Returns
         -------
@@ -162,7 +162,7 @@ class FsrApiResponse(requests.models.Response):
 
     @property
     def fsr_message(self) -> str:
-        """:py:class:`str`: The FS Register status message from the original request.
+        """:py:class:`str`: The FS Register status message in the response.
 
         Returns
         -------
@@ -173,7 +173,7 @@ class FsrApiResponse(requests.models.Response):
 
     @property
     def fsr_data(self) -> dict | list[dict]:
-        """:py:class:`dict` or :py:class:`list`: The FS Register data from the original request.
+        """:py:class:`dict` or :py:class:`list`: The FS Register data in the response.
 
         Returns
         -------
@@ -185,10 +185,10 @@ class FsrApiResponse(requests.models.Response):
 
 
 class FsrApiClient:
-    """API client for the FS Register API (V0.1).
+    """Client for the FS Register API (V0.1).
 
     Consult the developer documentation for further details on the underlying
-    API.
+    API:
 
     https://register.fca.org.uk/Developer/s/
 
@@ -219,7 +219,7 @@ class FsrApiClient:
 
     _api_session: FsrApiSession
 
-    def __init__(self, api_username: str, api_key: str):
+    def __init__(self, api_username: str, api_key: str) -> None:
         """Initialiser requiring the API username and key.
 
         Parameters
@@ -227,9 +227,8 @@ class FsrApiClient:
         api_username : str
             The API username which will be the email used to sign up on the
             FS Register developer portal:
-            ::
 
-                https://register.fca.org.uk/Developer/s/
+            https://register.fca.org.uk/Developer/s/
 
         api_key : str
             The API key obtained from the registration profile on the FS
@@ -248,7 +247,7 @@ class FsrApiClient:
 
     @property
     def api_session(self) -> FsrApiSession:
-        """:py:class:`~fsrapiclient.api.FsrApiSession`: The FS Register status message from the original request.
+        """:py:class:`~fsrapiclient.api.FsrApiSession`: The API session instance.
 
         Returns
         -------
@@ -265,12 +264,12 @@ class FsrApiClient:
 
     @property
     def api_version(self) -> str:
-        """:py:class:`str`: The FS Register API version being used by the client.
+        """:py:class:`str`: The API version being used by the client.
 
         Returns
         -------
         str
-            The FS Register API version being used by the client.
+            The API version being used by the client.
 
         Examples
         --------
@@ -281,9 +280,9 @@ class FsrApiClient:
         return FSR_API_CONSTANTS.API_VERSION.value
 
     def common_search(self, search_str: str) -> FsrApiResponse:
-        """`py:class:~fsrapiclient.api.FsrApiResponse``: Returns a response containing the results of a search using the FS Register API common search API endpoint.
+        """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the results of a search using the FS Register API common search API endpoint.
 
-        Directly calls on the FS Register API common search endpoint:
+        Directly calls on the API common search endpoint:
         ::
 
             /V0.1/Search?q=<query>&type=<entity type>
@@ -292,7 +291,7 @@ class FsrApiClient:
         search string and entity type (``"firm"``, ``"individual"``,
         ``"fund"``).
 
-        Returns an ``FsrApiResponse`` object if the API call completes
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse` object if the API call completes
         without exceptions or errors.
 
         Parameters
@@ -311,13 +310,13 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            An FS Register API response object, if the request completed
-            successfully.
+            Wrapper of the API response object - there may still be no data in
+            the response if the FRN isn't found.
 
         Raises
         ------
         FsrApiRequestException
-            If there was a ``requests.RequestException`` in making the original
+            If there was a :py:class:`requests.RequestException` in making the original
             request.
 
         Examples
@@ -344,7 +343,7 @@ class FsrApiClient:
     def search_frn(self, firm_name: str) -> str:
         """:py:class:`str`: Returns the unique firm reference number (FRN) of a given firm, if found.
 
-        Uses the FS Register API common search endpoint:
+        Uses the API common search endpoint:
         ::
 
             /V0.1/Search?q=<firm name>&type=firm
@@ -352,8 +351,8 @@ class FsrApiClient:
         to perform a case-insensitive firm-type search in the FS Register on the
         given firm name.
 
-        Returns a non-null string of the FRN if the firm name is found,
-        otherwise ``None`` is returned.
+        Returns a non-null string of the FRN if there is a unique associated
+        firm.
 
         Parameters
         ----------
@@ -368,9 +367,8 @@ class FsrApiClient:
             If there was a request exception from calling the common search
             handler.
 
-        FsrApiResponseError
-            If there was an error in the FS Register API response or in
-            processing the response.
+        FsrApiException
+            If there was an error in the API response or in processing the response.
 
         Returns
         -------
@@ -437,8 +435,7 @@ class FsrApiClient:
     def _firm_info(self, frn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for firm information API handlers.
 
-        Is the base handler for the following firm-specific FS Register API
-        endpoints (in alphabetical order):
+        Is the base handler for the following firm-specific API endpoints (in alphabetical order):
         ::
 
             /V0.1/Firm/{FRN}
@@ -462,25 +459,26 @@ class FsrApiClient:
            This is a private method and is **not** intended for direct use by
            end users.
 
-        Uses the firm-specific FS Register API endpoint(s)
+        Uses the firm-specific API endpoint(s)
         ::
 
             /V0.1/Firm/{FRN}[/<optional modifier(s)>]
 
-        and returns an ``FsrApiResponse``, e.g. a request for information
-        on Hiscox Insurance Company Limited, which has the FRN 113849.
+        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
+        request for information on Hiscox Insurance Company Limited, which has
+        the FRN 113849.
         ::
 
             /V0.1/Firm/113849
 
         The optional modifiers, given as a tuple of strings, should represent a
-        valid ordered combination of actions and/or resources related to the
+        valid ordered combination of actions and/or properties related to the
         firm given by the FRN.
 
         The modifier strings should **NOT** contain any leading or trailing
         forward slashes (``"/"``) as this can lead to badly formed URLs
-        and to responses with no FS Register data - in any case, any leading or
-        trailing forward slashes are stripped before the request.
+        and to responses with no data - in any case, any leading or trailing
+        forward slashes are stripped before the request.
 
         Parameters
         ----------
@@ -489,8 +487,8 @@ class FsrApiClient:
 
         modifiers : tuple, default=None
             Optional tuple of strings indicating a valid ordered combination of
-            resource and/or action modifiers for the firm in question. Should
-            **NOT** have a leading or trailing forward slashes (``"/"``).
+            resource and/or action modifiers for the firm in question. Should 
+            **NOT** have leading or trailing forward slashes (``"/"``).
 
         Raises
         ------
@@ -501,7 +499,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Firm/{frn}'
@@ -522,8 +520,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -533,7 +531,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -552,13 +550,13 @@ class FsrApiClient:
     def get_firm_names(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the alternative or secondary trading name details of a firm, given its firm reference number (FRN).
 
-        Handler for the firm names FS Register API endpoint:
+        Handler for the firm names API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Names
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -568,7 +566,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -588,12 +586,12 @@ class FsrApiClient:
     def get_firm_addresses(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the address details of a firm, given its firm reference number (FRN).
 
-        Handler for the firm address details FS Register API endpoint:
+        Handler for the firm address details API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Address
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -604,7 +602,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -623,13 +621,13 @@ class FsrApiClient:
     def get_firm_controlled_functions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the controlled functions associated with a firm ,given its firm reference number (FRN).
 
-        Handler for the firm controlled functions FS Register API endpoint:
+        Handler for the firm controlled functions API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/CF
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -639,7 +637,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -658,13 +656,13 @@ class FsrApiClient:
     def get_firm_individuals(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the individuals associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm individuals FS Register API endpoint:
+        Handler for the firm individuals API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Individuals
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -674,7 +672,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -693,13 +691,13 @@ class FsrApiClient:
     def get_firm_permissions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the permissions associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm permissions FS Register API endpoint:
+        Handler for the firm permissions API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Permissions
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -709,8 +707,8 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
-            theresponse if the FRN isn't found.
+            Wrapper of the API response object - there may still be no data in
+            the response if the FRN isn't found.
 
         Examples
         --------
@@ -728,13 +726,13 @@ class FsrApiClient:
     def get_firm_requirements(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the requirements associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm requirements FS Register API endpoint:
+        Handler for the firm requirements API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Requirements
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -744,7 +742,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -763,13 +761,13 @@ class FsrApiClient:
     def get_firm_requirement_investment_types(self, frn: str, req_ref: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any investment types listed for a specific requirement associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm requirement investment types FS Register API endpoint:
+        Handler for the firm requirement investment types API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Requirements/<ReqRef>/InvestmentTypes
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -782,7 +780,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -799,13 +797,13 @@ class FsrApiClient:
     def get_firm_regulators(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the regulators associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm regulators FS Register API endpoint:
+        Handler for the firm regulators API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Regulators
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -815,7 +813,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -834,12 +832,12 @@ class FsrApiClient:
     def get_firm_passports(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the passports associated with a firm, given its firm reference number (FRN).
 
-        Handler for the firm passports FS Register API endpoint:
+        Handler for the firm passports API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Passports
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -850,7 +848,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -869,12 +867,12 @@ class FsrApiClient:
     def get_firm_passport_permissions(self, frn: str, country: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing country-specific passport permissions for a firm and a country, given its firm reference number (FRN) and country name.
 
-        Handler for the firm passport permissions FS Register API endpoint:
+        Handler for the firm passport permissions API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Requirements/{Country}/Permission
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -888,7 +886,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -905,13 +903,13 @@ class FsrApiClient:
     def get_firm_waivers(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any waivers applying to a firm, given its firm reference number (FRN).
 
-        Handler for the firm waivers FS Register API endpoint:
+        Handler for the firm waivers API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Waivers
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
-        or null if it not.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
+        have data if the FRN exists, or null if it not.
 
         Parameters
         ----------
@@ -921,7 +919,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -940,12 +938,12 @@ class FsrApiClient:
     def get_firm_exclusions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any exclusions applying to a firm, given its firm reference number (FRN).
 
-        Handler for the firm exclusions FS Register API endpoint:
+        Handler for the firm exclusions API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/Exclusions
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -956,7 +954,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -975,12 +973,12 @@ class FsrApiClient:
     def get_firm_disciplinary_history(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the disciplinary history of a firm, given its firm reference number (FRN).
 
-        Handler for the firm disciplinary history FS Register API endpoint:
+        Handler for the firm disciplinary history API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/DisciplinaryHistory
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -991,7 +989,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -1010,13 +1008,12 @@ class FsrApiClient:
     def get_firm_appointed_representatives(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing information on the appointed representatives of a firm, given its firm reference number (FRN).
 
-        Handler for the firm appointed representatives FS Register API
-        endpoint:
+        Handler for the firm appointed representatives API endpoint:
         ::
 
             /V0.1/Firm/{FRN}/AR
 
-        Returns an ``FsrApiResponse``, which could have data if the FRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
         or null if it not.
 
         Parameters
@@ -1027,7 +1024,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -1047,7 +1044,7 @@ class FsrApiClient:
     def search_irn(self, individual_name: str) -> str:
         """:py:class:`str`: Returns the unique individual reference number (IRN) of a given individual, if found.
 
-        Uses the FS Register API common search endpoint:
+        Uses the API common search endpoint:
         ::
 
             /V0.1/Search?q=<individual name>&type=individual
@@ -1055,8 +1052,8 @@ class FsrApiClient:
         to perform a case-insensitive individual-type search in the FS Register on the
         given name.
 
-        Returns a non-null string of the IRN if the individual name is found,
-        otherwise ``None`` is returned.
+        Returns a non-null string of the IRN if there is a unique associated
+        individual.
 
         Parameters
         ----------
@@ -1071,9 +1068,8 @@ class FsrApiClient:
             If there was a request exception from calling the common search
             handler.
 
-        FsrApiResponseError
-            If there was an error in the FS Register API response or in
-            processing the response.
+        FsrApiException
+            If there was an error in the API response or in processing the response.
 
         Returns
         -------
@@ -1146,25 +1142,25 @@ class FsrApiClient:
            This is a private method and is **not** intended for direct use by
            end users.
 
-        Uses the FS Register API individual endpoint(s)
+        Uses the API individual endpoint(s)
         ::
 
             /V0.1/Individuals/{IRN}[/<optional modifier(s)>]
 
-        and returns an ``FsrApiResponse``, e.g. a request for information
-        on "Mark Carney", who has the IRN 'MXC29012'.
+        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
+        request for information on "Mark Carney", who has the IRN 'MXC29012'.
         ::
 
             /V0.1/Individuals/MXC29012
 
         The optional modifiers, given as a tuple of strings, should represent a
-        valid ordered combination of actions and/or resources related to the
+        valid ordered combination of actions and/or properties related to the
         individual given by the IRN.
 
         The modifier strings should **NOT** contain any leading or trailing
         forward slashes (``"/"``) as this can lead to badly formed URLs
-        and to responses with no FS Register data - in any case, any leading or
-        trailing forward slashes are stripped before the request.
+        and to responses with no data - in any case, any leading or trailing
+        forward slashes are stripped before the request.
 
         Parameters
         ----------
@@ -1174,7 +1170,7 @@ class FsrApiClient:
         modifiers : tuple, default=None
             Optional tuple of strings indicating a valid ordered combination of
             resource and/or action modifiers for the individual in question.
-            Should**NOT** have a leading or trailing forward slashes (``"/"``).
+            Should **NOT** have leading or trailing forward slashes (``"/"``).
 
         Raises
         ------
@@ -1185,7 +1181,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Individuals/{irn}'
@@ -1206,7 +1202,7 @@ class FsrApiClient:
 
             /V0.1/Individuals/{IRN}
 
-        Returns an ``FsrApiResponse``, which could have data if the IRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
         or null if it not.
 
         Parameters
@@ -1217,7 +1213,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1236,12 +1232,12 @@ class FsrApiClient:
     def get_individual_controlled_functions(self, irn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the controlled functions associated with an individual, given their individual reference number (FRN).
 
-        Handler for the individual controlled functions FS Register API endpoint:
+        Handler for the individual controlled functions API endpoint:
         ::
 
             /V0.1/Firm/{IRN}/CF
 
-        Returns an ``FsrApiResponse``, which could have data if the IRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
         or null if it not.
 
         Parameters
@@ -1252,7 +1248,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapepr of the API response object - there may still be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1271,12 +1267,12 @@ class FsrApiClient:
     def get_individual_disciplinary_history(self, irn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the disciplinary history of an individual, given their individual reference number (FRN).
 
-        Handler for the individual disciplinary history FS Register API endpoint:
+        Handler for the individual disciplinary history API endpoint:
         ::
 
             /V0.1/Firm/{IRN}/DisciplinaryHistory
 
-        Returns an ``FsrApiResponse``, which could have data if the IRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
         or null if it not.
 
         Parameters
@@ -1287,7 +1283,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1308,7 +1304,7 @@ class FsrApiClient:
     def search_prn(self, fund_name: str) -> str:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns the unique product reference number (IRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
 
-        Uses the FS Register API common search endpoint:
+        Uses the API common search endpoint:
         ::
 
             /V0.1/Search?q=<fund name>&type=fund
@@ -1316,8 +1312,8 @@ class FsrApiClient:
         to perform a case-insensitive fund-type search in the FS Register on
         the given name.
 
-        Returns a non-null string of the PRN if the fund name is found,
-        otherwise ``None`` is returned.
+        Returns a non-null string of the PRN if there is a unique associated
+        fund.
 
         Parameters
         ----------
@@ -1332,9 +1328,9 @@ class FsrApiClient:
             If there was a request exception from calling the common search
             handler.
 
-        FsrApiResponseError
-            If there was an error in the FS Register API response or in
-            processing the response.
+        FsrApiResponseException
+            If there was an error in the API response or in processing the
+            response.
 
         Returns
         -------
@@ -1395,8 +1391,7 @@ class FsrApiClient:
     def _fund_info(self, prn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : A private, base handler for fund (or collective investment scheme (CIS)) information API handlers.
 
-        Is the base handler for the following fund-specific FS Register API
-        endpoints:
+        Is the base handler for the following fund-specific API endpoints:
         ::
 
             /V0.1/CIS/{PRN}
@@ -1408,12 +1403,12 @@ class FsrApiClient:
            This is a private method and is **not** intended for direct use by
            end users.
 
-        Uses the FS Register API individual endpoint(s)
+        Uses the API individual endpoint(s)
         ::
 
             /V0.1/CIS/{PRN}[/<optional modifier(s)>]
 
-        and returns an ``FsrApiResponse``, e.g. a request for information
+        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a request for information
         on "'Northern Trust High Dividend ESG World Equity Feeder Fund", which
         has the PRN '913937'.
         ::
@@ -1421,7 +1416,7 @@ class FsrApiClient:
             /V0.1/CIS/913937
 
         The optional modifiers, given as a tuple of strings, should represent a
-        valid ordered combination of actions and/or resources related to the
+        valid ordered combination of actions and/or properties related to the
         fund given by the PRN.
 
         The modifier strings should **NOT** contain any leading or trailing
@@ -1437,7 +1432,7 @@ class FsrApiClient:
         modifiers : tuple, default=None
             Optional tuple of strings indicating a valid ordered combination of
             resource and/or action modifiers for the fund in question.
-            Should**NOT** have a leading or trailing forward slashes (``"/"``).
+            Should **NOT** have leading or trailing forward slashes (``"/"``).
 
         Raises
         ------
@@ -1448,7 +1443,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/CIS/{prn}'
@@ -1469,7 +1464,7 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}
 
-        Returns an ``FsrApiResponse``, which could have data if the PRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
         or null if it not.
 
         Parameters
@@ -1480,7 +1475,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the PRN isn't found.
 
         Examples
@@ -1504,7 +1499,7 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}/Names
 
-        Returns an ``FsrApiResponse``, which could have data if the PRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
         or null if it not.
 
         Parameters
@@ -1515,7 +1510,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the PRN isn't found.
 
         Examples
@@ -1539,7 +1534,7 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}/Subfund
 
-        Returns an ``FsrApiResponse``, which could have data if the PRN exists,
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
         or null if it not.
 
         Parameters
@@ -1550,7 +1545,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            The FS Register API response object - there may still be no data in
+            Wrapper of the API response object - there may still be no data in
             the response if the PRN isn't found.
 
         Examples

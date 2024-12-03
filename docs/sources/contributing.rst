@@ -128,14 +128,6 @@ Unit tests can be run all at once using :command:`make unittests` or individuall
 
    python -m pytest -sv tests/units/test_api.py::TestFsrApiClient
 
-..
-
-   [!NOTE] The ``-s`` option in the ``pytest`` command is to allow
-   interactive environments to be entered on errors, e.g. debugger
-   breakpoints. The default behaviour of `capturing console
-   input/output <https://docs.pytest.org/en/stable/how-to/capture-stdout-stderr.html#default-stdout-stderr-stdin-capturing-behaviour>`_
-   would otherwise prevent debuggers from being triggered.
-
 The doctests serve as acceptance tests, and are best run after the unit tests. They can be run all at once using ``make doctests``, or individually by library using :command:`python -m doctest`, e.g. running all the doctests in :py:mod:`fsrapiclient.api`:
 
 .. code:: shell
@@ -149,16 +141,20 @@ Documentation :fas:`book`
 
 Detailed documentation can be found `here <https://fsrapiclient.readthedocs.io>`_.
 
-CI
---
+.. _contributing.ci:
+
+CI :fas:`circle-play`
+=====================
 
 The CI pipelines are defined in the `CI YML <https://github.com/sr-murthy/fsrapiclient/blob/main/.github/workflows/ci.yml>`_
 and the `CodeQL Analysis YML <https://github.com/sr-murthy/fsrapiclient/blob/main/.github/workflows/codeql-analysis.yml>`_. Currently, pipelines for all branches include a tests stage that includes Ruff linting, unit tests, Python doctests, and in that order.
 
-Versioning and Releases
------------------------
+.. _contributing.versioning-and-releases:
 
-The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.2.0``.
+Versioning and Releases :fas:`upload`
+=====================================
+
+The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.2.1``.
 
 There is currently no dedicated pipeline for releases - both `GitHub releases <https://github.com/sr-murthy/fsrapiclient/releases>`_ and `PyPI packages <https://pypi.org/project/fsrapiclient>`_ are published manually, but both have the same version tag.
 

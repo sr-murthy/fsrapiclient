@@ -192,7 +192,7 @@ html_context = {
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 # General (non-theme) HTML output options
-html_baseurl = 'https://fsrapiclient.readthedocs.io/en/latest/'
+html_baseurl = 'https://fsrapiclient.readthedocs.io'
 
 #html_sidebars = {
 #    "sources/getting-started": [],

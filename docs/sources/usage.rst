@@ -29,14 +29,14 @@ storing the API username (signup email) and API key. These, and also the API ver
    >>> client.api_version
    'V0.1'
 
-All public client methods return :py:class:`~fsrapiclient.api.FsrApiResponse` objects, which have four properties specific to the FS Register API:
+Almost all public client methods return :py:class:`~fsrapiclient.api.FsrApiResponse` objects, which have four properties specific to the FS Register API:
 
-- ``fsr_status`` - an FS Register-specific status indicator for the
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_status` - an FS Register-specific status indicator for the
   request
-- ``fsr_message`` - an FS Register-specific status message for the
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_message` - an FS Register-specific status message for the
   request
-- ``fsr_data`` - the response data
-- ``fsr_resultinfo`` - pagination information for the response data
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_data` - the response data
+- :py:attr:`~fsrapiclient.api.FsrApiResponse.fsr_resultinfo` - pagination information for the response data
 
 As :py:class:`~fsrapiclient.api.FsrApiResponse` is a subclass of :py:class:`requests.Response`, request information can be obtained from the :py:attr:`requests.Response.request` attribute, e.g.
 
@@ -101,7 +101,7 @@ The response data as stored in the :py:attr:`~fsrapiclient.api.FsrApiResponse.fs
    >>> client.common_search(urlencode({'q': 'natwest', 'type': 'individual'})).fsr_data
    # Null
 
-.. _usage.search-ref-numbers:
+.. _usage.searching-ref-numbers:
 
 Searching for FRNs, IRNs and PRNs
 =================================
@@ -124,7 +124,9 @@ Imprecise names in the search can produce multiple records, and will trigger an 
 .. code:: python
 
    >>> client.search_frn('hiscox')
-   FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+   Traceback (most recent call last):
+   ...
+   fsrapiclient.api.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
 
 In this case the exception was generated because a common search for ``'hiscox'`` shows that there are multiple firm entries containing this name fragment:
 
@@ -148,7 +150,9 @@ Searches for non-existent firms will trigger an :py:class:`~fsrapiclient.excepti
 .. code:: python
 
    >>> client.search_frn('a nonexistent firm')
-   FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
+   Traceback (most recent call last):
+   ...
+   fsrapiclient.api.FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 
 A few examples are given below of IRN searches.
 
@@ -184,12 +188,12 @@ A few examples are given below of PRN searches.
    ...
    fsrapiclient.api.FsrApiResponseException: No data found in FSR API response. Please check the search parameters and try again.
 
-.. _usage.firm-request-methods:
+.. _usage.firms:
 
-Firm-specific Methods
-=====================
+Firms
+=====
 
-Firm-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for firm-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
 
 .. list-table::
    :align: left
@@ -456,12 +460,12 @@ Examples are given below for each request type for Barclays Bank Plc (FRN #12270
      'Waivers_Discretions': 'A00003642P.pdf',
      'Rule_ArticleNo': ['Perm & Wav - CRR Ru 2.2']}]
 
-.. _usage.individual-request-methods:
+.. _usage.individuals:
 
-Individual-specific Methods
-===========================
+Individuals
+===========
 
-Individual-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for individual-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
 
 .. list-table::
    :align: left
@@ -526,12 +530,12 @@ Some examples are given below for a specific, existing individual, Mark Carney (
    >>> client.get_individual_disciplinary_history('MXC29012').fsr_data
    # None
 
-.. _usage.fund-request-methods:
+.. _usage.funds:
 
-Fund-specific Methods
-=====================
+Funds
+=====
 
-Fund-specific client methods, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for fund-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
 
 .. list-table::
    :align: left
