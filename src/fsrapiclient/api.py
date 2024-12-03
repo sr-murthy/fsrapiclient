@@ -186,8 +186,7 @@ class FsrApiResponse(requests.models.Response):
 class FsrApiClient:
     """Client for the FS Register API (V0.1).
 
-    Consult the developer documentation for further details on the underlying
-    API:
+    Consult the API documentation for further details.
 
     https://register.fca.org.uk/Developer/s/
 
@@ -1202,7 +1201,7 @@ class FsrApiClient:
             /V0.1/Individuals/{IRN}
 
         Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
-        if the FRN is found, otherwise with no data.
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1237,7 +1236,7 @@ class FsrApiClient:
             /V0.1/Firm/{IRN}/CF
 
         Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
-        if the FRN is found, otherwise with no data.
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1272,7 +1271,7 @@ class FsrApiClient:
             /V0.1/Firm/{IRN}/DisciplinaryHistory
 
         Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
-        if the FRN is found, otherwise with no data.
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1301,7 +1300,7 @@ class FsrApiClient:
         return self._individual_info(irn, modifiers=('DisciplinaryHistory',))
 
     def search_prn(self, fund_name: str) -> str:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns the unique product reference number (IRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
+        """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns the unique product reference number (PRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
 
         Uses the API common search endpoint:
         ::
@@ -1465,7 +1464,7 @@ class FsrApiClient:
             /V0.1/CIS/{PRN}
 
         Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
-        if the FRN is found, otherwise with no data.
+        if the PRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1500,7 +1499,7 @@ class FsrApiClient:
             /V0.1/CIS/{PRN}/Names
 
         Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
-        if the FRN is found, otherwise with no data.
+        if the PRN is found, otherwise with no data.
 
         Parameters
         ----------

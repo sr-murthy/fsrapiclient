@@ -130,13 +130,13 @@ The response data as stored in the :py:attr:`~fsrapiclient.api.FsrApiResponse.fs
 Searching for FRNs, IRNs and PRNs
 =================================
 
-Generally, firm reference numbers (FRN), individual reference numbers (IRN), and product reference numbers (PRN), may not be known in advance. These can be found via the following client search methods, which returns strings if the searches are successful:
+Generally, firm reference numbers (FRN), individual reference numbers (IRN), and product reference numbers (PRN), may not be known in advance. These can be found via the following client search methods, which return strings if the searches are successful:
 
 - :py:meth:`~fsrapiclient.api.FsrApiClient.search_frn()` - case-insensitive search for FRNs
 - :py:meth:`~fsrapiclient.api.FsrApiClient.search_irn()` - case-insensitive search for IRNs
 - :py:meth:`~fsrapiclient.api.FsrApiClient.search_prn()` - case-insensitive search for PRNs
 
-All three methods triggers an :py:class:`~fsrapiclient.exceptions.FsrApiResponseException` in case of non-unique, multiple results, or no data.
+All three methods trigger an :py:class:`~fsrapiclient.exceptions.FsrApiResponseException` in case of non-unique, multiple results, or no data.
 
 FRNs, IRNs, and PRNs are associated with unique firms, individuals, and funds, respectively, in the FS Register, whether current or past. The more precise the name substring the more likely is an exact, unique result. Some examples are given below for each type of search, starting with FRNs:
 
@@ -154,7 +154,7 @@ Imprecise names in the search can produce multiple records, and will trigger an 
    ...
    fsrapiclient.api.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
 
-In this case the exception was generated because a common search for ``'hiscox'`` shows that there are multiple firm entries containing this name fragment:
+In this case the exception was generated because a common search for ``'hiscox'`` shows that there are multiple firms entries containing this name fragment:
 
 .. code:: python
 
@@ -536,7 +536,7 @@ Examples are given below for each request type for Barclays Bank Plc (FRN #12270
 
 .. grid:: 1
 
-   .. grid-item-card:: **Barclays Bank (FRN #122702)** - investment types associated with a specific firm requirment
+   .. grid-item-card:: **Barclays Bank (FRN #122702)** - investment types associated with a specific firm requirement
 
       .. code:: python
 
