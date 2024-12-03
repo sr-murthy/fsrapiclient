@@ -2,7 +2,7 @@
 
 Contributors and contributions are welcome. Please read these guidelines first.
 
-## Git `github`
+## Git
 
 The project homepage is on [GitHub](https://github.com/sr-murthy/fsrapiclient).
 
@@ -11,7 +11,7 @@ Contributors can open pull requests from a fork targeting the parent [main branc
 
 A simple Git workflow, using a feature and/or fix branch created off the `main` branch of your fork, is recommended.
 
-## Repo `folder`
+## Repo
 
 If you wish to contribute please first ensure you have [SSH access to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh). This basically involves creating a project-specific SSH keypair - if you don’t already have one - and adding it to GitHub. If you have done this successfully then this verification step should work:
 
@@ -42,7 +42,7 @@ git clone git+ssh://git@github.com/<fork user>/fsrapiclient
 
 You can create additional remotes for the parent project to enable easier syncing, or you can simply create PRs directly against the parent project.
 
-## Dependencies & PDM `cubes`
+## Dependencies & PDM
 
 The package only depends on the [requests](https://requests.readthedocs.io/en/latest/) library.
 
@@ -92,7 +92,7 @@ pdm export -v -f requirements --dev -o requirements.txt
 
 For more information on PDM lockfiles and installing requirements see the [PDM documentation](https://pdm-project.org/latest/).
 
-## Tests `microscope`
+## Tests
 
 Tests are defined in the `tests` folder, and should be run with [pytest](https://pytest-cov.readthedocs.io/en/latest/).
 
@@ -118,17 +118,17 @@ The doctests serve as acceptance tests, and are best run after the unit tests. T
 python -m doctest -v src/fsrapiclient/api.py
 ```
 
-## Documentation `book`
+## Documentation
 
 This documentation site is written, built and deployed using [reStructuredText](https://docutils.sourceforge.io/rst.html),
 [Sphinx](https://www.sphinx-doc.org/en/master/), and [Read the Docs (RTD)](https://readthedocs.org/) respectively. The Sphinx theme used is [Furo](https://github.com/pradyunsg/furo).
 
-## CI `circle-play`
+## CI
 
 The CI pipelines are defined in the [CI YML](https://github.com/sr-murthy/fsrapiclient/blob/main/.github/workflows/ci.yml)
 and the [CodeQL Analysis YML](https://github.com/sr-murthy/fsrapiclient/blob/main/.github/workflows/codeql-analysis.yml). Currently, pipelines for all branches include a tests stage that includes Ruff linting, unit tests, Python doctests, and in that order.
 
-## Versioning and Releases `upload`
+## Versioning and Releases
 
 The [PyPI package](https://pypi.org/project/fsrapiclient/) is currently at version `0.2.2`.
 
