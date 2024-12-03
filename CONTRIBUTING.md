@@ -2,16 +2,16 @@
 
 Contributors and contributions are welcome. Please read these guidelines first.
 
-## Git
+## Git `github`
 
 The project homepage is on [GitHub](https://github.com/sr-murthy/fsrapiclient).
 
-Contributors can open pull requests from a fork targeting the parent [main branch](https://github.com/sr-murthy/fsrapiclient/tree/main). But it may be a good first step to create an [issue](https://github.com/sr-murthy/fsrapiclient/issues) or open a
-[discussion topic](https://github.com/sr-murthy/fsrapiclient/discussions).
+Contributors can open pull requests from a fork targeting the parent [main branch](https://github.com/sr-murthy/fsrapiclient/tree/main). But it may be a good first step to create an
+[issue](https://github.com/sr-murthy/fsrapiclient/issues) or open a [discussion topic](https://github.com/sr-murthy/fsrapiclient/discussions).
 
 A simple Git workflow, using a feature and/or fix branch created off the `main` branch of your fork, is recommended.
 
-## Repo
+## Repo `folder`
 
 If you wish to contribute please first ensure you have [SSH access to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh). This basically involves creating a project-specific SSH keypair - if you don’t already have one - and adding it to GitHub. If you have done this successfully then this verification step should work:
 
@@ -96,8 +96,7 @@ For more information on PDM lockfiles and installing requirements see the [PDM d
 
 Tests are defined in the `tests` folder, and should be run with [pytest](https://pytest-cov.readthedocs.io/en/latest/).
 
-For convenience different types of test targets are defined in the[Makefile](https://github.com/sr-murthy/fsrapiclient/blob/main/Makefile): lint` for Ruff linting, `doctests` for running [doctests](https://docs.python.org/3/library/doctest.html) and
-`unittests` for running unittests and measuring coverage, using `pytest` and the `pytest-cov` plugin:
+For convenience different types of test targets are defined in the [Makefile](https://github.com/sr-murthy/fsrapiclient/blob/main/Makefile): `lint` for Ruff linting, `doctests` for running [doctests](https://docs.python.org/3/library/doctest.html) and `unittests` for running unittests and measuring coverage, using `pytest` and the [pytest-cov](https://pytest-cov.readthedocs.io/en/latest/) plugin:
 
 ``` shell
 make lint
@@ -107,8 +106,7 @@ make doctests
 
 Linting warnings should be addressed first, and any changes staged and committed.
 
-Unit tests can be run all at once using `make unittests` or individually using `pytest`, e.g. running the test class for the
-`~fsrapiclient.api.FsrApiClient` class:
+Unit tests can be run all at once using `make unittests` or individually using `pytest`, e.g. running the test class for the `~fsrapiclient.api.FsrApiClient` class:
 
 ``` shell
 python -m pytest -sv tests/units/test_api.py::TestFsrApiClient
@@ -122,7 +120,8 @@ python -m doctest -v src/fsrapiclient/api.py
 
 ## Documentation `book`
 
-Detailed documentation can be found [here](https://fsrapiclient.readthedocs.io).
+This documentation site is written, built and deployed using [reStructuredText](https://docutils.sourceforge.io/rst.html),
+[Sphinx](https://www.sphinx-doc.org/en/master/), and [Read the Docs (RTD)](https://readthedocs.org/) respectively.
 
 ## CI `circle-play`
 
@@ -135,4 +134,4 @@ The [PyPI package](https://pypi.org/project/fsrapiclient/) is currently at versi
 
 There is currently no dedicated pipeline for releases - both [GitHub releases](https://github.com/sr-murthy/fsrapiclient/releases) and [PyPI packages](https://pypi.org/project/fsrapiclient) are published manually, but both have the same version tag.
 
-Pipelines for releases will be added as part of a future release.
+A separate release pipeline may be added as part of a future release.
