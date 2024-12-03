@@ -121,7 +121,7 @@ python -m doctest -v src/fsrapiclient/api.py
 ## Documentation `book`
 
 This documentation site is written, built and deployed using [reStructuredText](https://docutils.sourceforge.io/rst.html),
-[Sphinx](https://www.sphinx-doc.org/en/master/), and [Read the Docs (RTD)](https://readthedocs.org/) respectively.
+[Sphinx](https://www.sphinx-doc.org/en/master/), and [Read the Docs (RTD)](https://readthedocs.org/) respectively. The Sphinx theme used is [Furo](https://github.com/pradyunsg/furo).
 
 ## CI `circle-play`
 

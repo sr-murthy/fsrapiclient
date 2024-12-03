@@ -6,7 +6,7 @@
 Understanding the FS Register API
 =================================
 
-The package functionality reflects the current version (``V0.1``) of the FS Register API. There is `API documentation <https://register.fca.org.uk/Developer/s/>`__ but access requires `registration <https://register.fca.org.uk/Developer/ShAPI_LoginPage?ec=302&startURL=%2FDeveloper%2Fs%2F#>`_.
+The package functionality reflects the current version (``V0.1``) of the `FS Register <https://www.fca.org.uk/firms/financial-services-register>`_ `API <https://register.fca.org.uk/Developer/s/>`_. The API is documented but access requires registration.
 
 The base URL for all API requests is:
 
@@ -21,9 +21,9 @@ Resources and Endpoints
 
 There are three main categories of resource about which information can be requested from the register via API endpoints:
 
-- **firms** - authorised and/or regulated firms (either current or past), or providing regulated products or services. These are described in more detail :ref:`here <fs-register-api.firm-requests>`.
-- **individuals** - individuals associated with the type of firms described above, either current or past.  These are described in more detail :ref:`here <fs-register-api.individual-requests>`.
-- **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds. These are described in more detail :ref:`here <fs-register-api.fund-requests>`.
+- **firms** - authorised and/or regulated firms (either current or past) involved with the provision of regulated products and/or services. Firms in the register have unique **firm reference numbers (FRN)** and their endpoints usually take these as one of the parameters. They are described in more detail :ref:`here <fs-register-api.firm-requests>`.
+- **individuals** - individuals associated with the type of firms described above, either current or past.  Individuals in the register have unique **individual reference numbers (IRN)** and their endpoints usually take these as one of the parameters. They are described in more detail :ref:`here <fs-register-api.individual-requests>`.
+- **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds. Funds in the register have unique **product reference numbers (PRN)** and their endpoints usually take these as one of the parameters. They are described in more detail :ref:`here <fs-register-api.fund-requests>`.
 
 There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund). This is described in more detail :ref:`here <fs-register-api.common-search-requests>`.
 
@@ -56,7 +56,7 @@ According to the `API documentation <https://register.fca.org.uk/Developer/s/>`_
 Firm Requests
 =============
 
-Firms are identified by unique firm reference numbers (FRN). The following table summarises firm-specific API endpoints.
+Firms in the FS Register are identified by unique firm reference numbers (FRN). The following table summarises firm-specific API endpoints.
 
 +-----------------------------------+------------------------+---------+
 | API endpoint                      | Parameters             | Request |
