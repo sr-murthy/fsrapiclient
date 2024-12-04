@@ -107,6 +107,7 @@ jobs:
         pdm run -v lint
         pdm install -v -dGtest --no-self --no-isolation
         pdm run -v pytest
+        sleep 10
         pdm run -v doctests
 
     - name: Upload coverage reports to Codecov

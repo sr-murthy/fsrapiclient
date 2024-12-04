@@ -9,7 +9,7 @@
 #     https://packaging.python.org/en/latest/tutorials/packaging-projects/
 #
 name = "fsrapiclient"
-description = "Lightweight Python client library for the UK Financial Services Register (FSR) RESTful API"
+description = "Lightweight Python client library for the UK Financial Services Register RESTful API"
 
 authors = [
     {name = "S. R. Murthy", email = "s.murthy@tutanota.com"},
@@ -23,7 +23,7 @@ dynamic = ["version"]
 
 requires-python = ">=3.10"
 
-license = {text = "MPL"}
+license = {file = "LICENSE"}
 
 dependencies = [
     "requests",
@@ -32,18 +32,21 @@ dependencies = [
 readme = "README.md"
 
 keywords = [
-    "authorised firm",
     "financial conduct authority",
     "financial data",
+    "financial regulation",
+    "financial services",
     "financial services register",
     "prudential regulation authority",
-    "regulated firm",
     "restful api",
+    "uk",
 ]
 
 classifiers = [
         "Environment :: Console",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -66,8 +69,8 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project.urls]
-Homepage = "https://github.com/sr-murthy/fsrapiclient"
-Documentation = "https://github.com/sr-murthy/fsrapiclient"
+Homepage = "https://fsrapiclient.readthedocs.io/index.html"
+Documentation = "https://fsrapiclient.readthedocs.io"
 Repository = "https://github.com/sr-murthy/fsrapiclient"
 
 # For working with PDM, including configuration and usage see:

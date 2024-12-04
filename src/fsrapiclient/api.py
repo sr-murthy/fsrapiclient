@@ -53,9 +53,8 @@ class FsrApiSession(requests.Session):
         api_username : str
             The API username which will be the email used to sign up on the
             FS Register developer portal:
-            ::
 
-                https://register.fca.org.uk/Developer/s/
+            https://register.fca.org.uk/Developer/s/
 
         api_key : str
             The API key obtained from the registration profile on the FS
@@ -187,8 +186,7 @@ class FsrApiResponse(requests.models.Response):
 class FsrApiClient:
     """Client for the FS Register API (V0.1).
 
-    Consult the developer documentation for further details on the underlying
-    API:
+    Consult the API documentation for further details.
 
     https://register.fca.org.uk/Developer/s/
 
@@ -285,14 +283,14 @@ class FsrApiClient:
         Directly calls on the API common search endpoint:
         ::
 
-            /V0.1/Search?q=<query>&type=<entity type>
+            /V0.1/Search?q=<query>&type=<resource type>
 
         to perform a case-insensitive search in the FS Register on the given
-        search string and entity type (``"firm"``, ``"individual"``,
+        search string and resource type (``"firm"``, ``"individual"``,
         ``"fund"``).
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse` object if the API call completes
-        without exceptions or errors.
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse` object if the
+        API call completes without exceptions or errors.
 
         Parameters
         ----------
@@ -301,16 +299,16 @@ class FsrApiClient:
             search string of the form:
             ::
 
-                q=<entity name>&type=<entity type>
+                q=<resource name>&type=<resource type>
 
-            where ``<entity name>`` is the name of a firm, individual or fund
-            (collective investment scheme), and ``<entity type>`` is one of
+            where ``<resource name>`` is the name of a firm, individual or fund
+            (collective investment scheme), and ``<resource type>`` is one of
             the strings ``"firm"``, ``"individual"``, or ``"fund"``.
 
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Raises
@@ -499,7 +497,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Firm/{frn}'
@@ -520,8 +518,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -531,7 +529,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -555,8 +553,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Names
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -566,7 +564,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -591,8 +589,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Address
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -602,7 +600,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -626,8 +624,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/CF
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -637,7 +635,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -661,8 +659,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Individuals
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -672,7 +670,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -696,8 +694,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Permissions
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -707,7 +705,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -731,8 +729,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Requirements
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -742,7 +740,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -766,8 +764,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Requirements/<ReqRef>/InvestmentTypes
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -780,7 +778,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -802,8 +800,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Regulators
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -813,7 +811,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -837,8 +835,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Passports
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -848,7 +846,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -872,8 +870,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Requirements/{Country}/Permission
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -886,7 +884,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -908,8 +906,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Waivers
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could
-        have data if the FRN exists, or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -919,7 +917,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -943,8 +941,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/Exclusions
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -954,7 +952,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -978,8 +976,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/DisciplinaryHistory
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -989,7 +987,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -1013,8 +1011,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{FRN}/AR
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the FRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1024,7 +1022,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
 
         Examples
@@ -1181,7 +1179,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Individuals/{irn}'
@@ -1202,8 +1200,8 @@ class FsrApiClient:
 
             /V0.1/Individuals/{IRN}
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1213,7 +1211,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1237,8 +1235,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{IRN}/CF
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1248,7 +1246,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapepr of the API response object - there may still be no data in
+            Wrapepr of the API response object - there may be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1272,8 +1270,8 @@ class FsrApiClient:
 
             /V0.1/Firm/{IRN}/DisciplinaryHistory
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the IRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the IRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1283,7 +1281,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the IRN isn't found.
 
         Examples
@@ -1302,7 +1300,7 @@ class FsrApiClient:
         return self._individual_info(irn, modifiers=('DisciplinaryHistory',))
 
     def search_prn(self, fund_name: str) -> str:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns the unique product reference number (IRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
+        """:py:class:`str` : Returns the unique product reference number (PRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
 
         Uses the API common search endpoint:
         ::
@@ -1408,9 +1406,10 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}[/<optional modifier(s)>]
 
-        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a request for information
-        on "'Northern Trust High Dividend ESG World Equity Feeder Fund", which
-        has the PRN '913937'.
+        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
+        request for information on
+        "Northern Trust High Dividend ESG World Equity Feeder Fund"
+        (PRN 913937).
         ::
 
             /V0.1/CIS/913937
@@ -1443,7 +1442,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the FRN isn't found.
         """
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/CIS/{prn}'
@@ -1464,8 +1463,8 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the PRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1475,7 +1474,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the PRN isn't found.
 
         Examples
@@ -1499,8 +1498,8 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}/Names
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the PRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1510,7 +1509,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the PRN isn't found.
 
         Examples
@@ -1534,8 +1533,8 @@ class FsrApiClient:
 
             /V0.1/CIS/{PRN}/Subfund
 
-        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, which could have data if the PRN exists,
-        or null if it not.
+        Returns a :py:class:`~fsrapiclient.api.FsrApiResponse`, with data
+        if the FRN is found, otherwise with no data.
 
         Parameters
         ----------
@@ -1545,7 +1544,7 @@ class FsrApiClient:
         Returns
         -------
         FsrApiResponse
-            Wrapper of the API response object - there may still be no data in
+            Wrapper of the API response object - there may be no data in
             the response if the PRN isn't found.
 
         Examples

@@ -1,3 +1,7 @@
+.. meta::
+
+   :google-site-verification: 3F2Jbz15v4TUv5j0vDJAA-mSyHmYIJq0okBoro3-WMY
+
 ============
 Contributing
 ============
@@ -112,7 +116,7 @@ Tests :fas:`microscope`
 Tests are defined in the ``tests`` folder, and should be run with `pytest <https://pytest-cov.readthedocs.io/en/latest/>`_.
 
 For convenience different types of test targets are defined in the `Makefile <https://github.com/sr-murthy/fsrapiclient/blob/main/Makefile>`_: ``lint`` for Ruff linting, ``doctests`` for running `doctests <https://docs.python.org/3/library/doctest.html>`_ and
-``unittests`` for running unittests and measuring coverage, using :program:`pytest` and the ``pytest-cov`` plugin:
+``unittests`` for running unittests and measuring coverage, using :program:`pytest` and the `pytest-cov <https://pytest-cov.readthedocs.io/en/latest/>`_ plugin:
 
 .. code:: shell
 
@@ -139,7 +143,7 @@ The doctests serve as acceptance tests, and are best run after the unit tests. T
 Documentation :fas:`book`
 =========================
 
-Detailed documentation can be found `here <https://fsrapiclient.readthedocs.io>`_.
+This documentation site is written, built and deployed using `reStructuredText <https://docutils.sourceforge.io/rst.html>`_, `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and `Read the Docs (RTD) <https://readthedocs.org/>`_ respectively. The Sphinx theme used is `Furo <https://github.com/pradyunsg/furo>`_.
 
 .. _contributing.ci:
 
@@ -154,8 +158,8 @@ and the `CodeQL Analysis YML <https://github.com/sr-murthy/fsrapiclient/blob/mai
 Versioning and Releases :fas:`upload`
 =====================================
 
-The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.2.1``.
+The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.2.2``.
 
 There is currently no dedicated pipeline for releases - both `GitHub releases <https://github.com/sr-murthy/fsrapiclient/releases>`_ and `PyPI packages <https://pypi.org/project/fsrapiclient>`_ are published manually, but both have the same version tag.
 
-Pipelines for releases will be added as part of a future release.
+A separate release pipeline may be added as part of a future release.

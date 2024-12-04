@@ -1,8 +1,12 @@
+.. meta::
+
+   :google-site-verification: 3F2Jbz15v4TUv5j0vDJAA-mSyHmYIJq0okBoro3-WMY
+
 ===============
 Getting Started
 ===============
 
-This is a `PyPI package <https://pypi.org/project/fsrapiclient/>`_, and the source is on `GitHub <https://github.com/sr-murthy/fsrapiclient>`_. The package is tested on Python 3.12 & 3.13 (on Linux, Windows and macOS), but should also install fine on earlier Python versions.
+This is a `PyPI package <https://pypi.org/project/fsrapiclient/>`_, and the source is on `GitHub <https://github.com/sr-murthy/fsrapiclient>`_. The package is tested on Python 3.12 & 3.13 (on Linux, Windows and macOS), but should also install fine on earlier Python versions from Python 3.8 and upwards.
 
 .. _getting-started.installation:
 
