@@ -1300,7 +1300,7 @@ class FsrApiClient:
         return self._individual_info(irn, modifiers=('DisciplinaryHistory',))
 
     def search_prn(self, fund_name: str) -> str:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns the unique product reference number (PRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
+        """:py:class:`str` : Returns the unique product reference number (PRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
 
         Uses the API common search endpoint:
         ::
