@@ -9,7 +9,7 @@
 #     https://packaging.python.org/en/latest/tutorials/packaging-projects/
 #
 name = "fsrapiclient"
-description = "Lightweight Python client library for the UK Financial Services Register (FSR) RESTful API"
+description = "Lightweight Python client library for the UK Financial Services Register RESTful API"
 
 authors = [
     {name = "S. R. Murthy", email = "s.murthy@tutanota.com"},
