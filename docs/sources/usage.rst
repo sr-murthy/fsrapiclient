@@ -59,11 +59,13 @@ As :py:class:`~fsrapiclient.api.FsrApiResponse` is a subclass of :py:class:`requ
 Common Search
 =============
 
-The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrApiClient.common_search()` method to make generic queries for firms, individuals, or funds. It requires an URL-encoded string of the form:
+The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrApiClient.common_search()` method to make generic queries for firms, individuals, or funds. It requires an URL-encoded parameterised string of the form:
 
 .. code:: bash
 
-   q=<query string>&type=<resource type>
+   q=<resource name>&type=<resource type>
+
+where ``q`` is a parameter whose value should be the name (or name substring) of a resource (firm, individual, or fund), and ``type`` is a parameter whose value should be one of ``'firm'``, ``'individual'``, ``'fund'``.
 
 Use :py:func:`urllib.parse.urlencode` to do the URL-encoding. Some examples of common search are given below for Barclays Bank Plc.
 
@@ -219,7 +221,7 @@ A few examples are given below of PRN searches.
 Firms
 =====
 
-Client methods for firm-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for firm-specific requests, the associated API endpoints, resource parameters, and returns are summarised in the table below.
 
 .. list-table::
    :align: left
@@ -229,82 +231,82 @@ Client methods for firm-specific requests, the associated API endpoints, and par
    * - Method
      - API Endpoint
      - Request Method
-     - Parameters
+     - Resource Parameters
      - Return
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm()`
      - ``/V0.1/Firm/{FRN}``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_addresses()`
      - ``/V0.1/Firm/{FRN}/Address``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_appointed_representatives()`
      - ``/V0.1/Firm/{FRN}/AR``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_controlled_functions()`
      - ``/V0.1/Firm/{FRN}/CF``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_disciplinary_history()`
      - ``/V0.1/Firm/{FRN}/DisciplinaryHistory``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_exclusions()`
      - ``/V0.1/Firm/{FRN}/Exclusions``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_individuals()`
      - ``/V0.1/Firm/{FRN}/Individuals``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_names()`
      - ``/V0.1/Firm/{FRN}/Names``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_passports()`
      - ``/V0.1/Firm/{FRN}/Passports``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_passport_permissions()`
      - ``/V0.1/Firm/{FRN}/Passports/{Country}/Permission``
-     - FRN (str), Country (str)
      - ``GET``
+     - FRN (str), Country (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_permissions()`
      - ``/V0.1/Firm/{FRN}/Permissions``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_regulators()`
      - ``/V0.1/Firm/{FRN}/Regulators``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_requirements()`
      - ``/V0.1/Firm/{FRN}/Requirements``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_requirement_investment_types()`
      - ``/V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes``
-     - FRN (str), Requirement Reference (str)
      - ``GET``
+     - FRN (str), Requirement Reference (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_firm_waivers()`
      - ``/V0.1/Firm/{FRN}/Waiver``
-     - FRN (str)
      - ``GET``
+     - FRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
 
 Examples are given below for each request type for Barclays Bank Plc (FRN #122702).
@@ -567,7 +569,7 @@ Examples are given below for each request type for Barclays Bank Plc (FRN #12270
 Individuals
 ===========
 
-Client methods for individual-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for individual-specific requests, the associated API endpoints, resource parameters, and returns are summarised in the table below.
 
 .. list-table::
    :align: left
@@ -581,18 +583,18 @@ Client methods for individual-specific requests, the associated API endpoints, a
      - Return
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_individual()`
      - ``/V0.1/Individuals/{IRN}``
-     - IRN (str)
      - ``GET``
+     - IRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_individual_controlled_functions()`
      - ``/V0.1/Individuals/{IRN}/CF``
-     - IRN (str)
      - ``GET``
+     - IRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_individual_disciplinary_history()`
      - ``/V0.1/Individuals/{IRN}/DisciplinaryHistory``
-     - IRN (str)
      - ``GET``
+     - IRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
 
 Some examples are given below for each type of request for a specific, existing individual, Mark Carney (IRN #MXC29012).
@@ -654,7 +656,7 @@ Some examples are given below for each type of request for a specific, existing 
 Funds
 =====
 
-Client methods for fund-specific requests, the associated API endpoints, and parameters and returns are summarised in the table below.
+Client methods for fund-specific requests, the associated API endpoints, resource parameters, and returns are summarised in the table below.
 
 .. list-table::
    :align: left
@@ -668,18 +670,18 @@ Client methods for fund-specific requests, the associated API endpoints, and par
      - Return
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_fund()`
      - ``/V0.1/CIS/{PRN}``
-     - PRN (str)
      - ``GET``
+     - PRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_fund_names()`
      - ``/V0.1/CIS/{PRN}/Names``
-     - PRN (str)
      - ``GET``
+     - PRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
    * - :py:meth:`~fsrapiclient.api.FsrApiClient.get_fund_subfunds()`
      - ``/V0.1/CIS/{PRN}/Subfund``
-     - PRN (str)
      - ``GET``
+     - PRN (str)
      - :py:class:`~fsrapiclient.api.FsrApiResponse`
 
 Some examples are given below for each type of request for a specific, existing fund, abrdn Multi-Asset Fund (PRN #185045).
