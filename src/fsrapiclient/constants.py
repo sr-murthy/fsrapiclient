@@ -24,3 +24,6 @@ class FSR_API_CONSTANTS(Enum):
 
     BASEURL = 'https://register.fca.org.uk/services'
     API_VERSION = 'V0.1'
+    RESOURCE_TYPE_FIRM = 'firm'
+    RESOURCE_TYPE_INDIVIDUAL = 'individual'
+    RESOURCE_TYPE_FUND = 'fund'
