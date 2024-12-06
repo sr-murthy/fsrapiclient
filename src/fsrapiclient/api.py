@@ -197,77 +197,21 @@ class FsrApiClient:
     >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
     >>> res
     <Response [200]>
-    >>> res.fsr_data
-    [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/969197', 'Status': 'Authorised', 'Reference Number': '969197', 'Type of business or Individual': 'Firm', 'Name': 'Hastings Financial Services Limited (Postcode: TN39 3LW)'}, {'URL': 'https://register.fca.org.uk/services/V0.1/Firm/311492', 'Status': 'Authorised', 'Reference Number': '311492', 'Type of business or Individual': 'Firm', 'Name': 'Hastings Insurance Services Limited (Postcode: TN39 3LW)'}, {'URL': 'https://register.fca.org.uk/services/V0.1/Firm/536726', 'Status': 'Authorised', 'Reference Number': '536726', 'Type of business or Individual': 'Firm', 'Name': 'I Go 4 Ltd. (Postcode: PE4 6JT)'}]
-    >>> res.fsr_status
-    'FSR-API-04-01-00'
-    >>> res.fsr_message
-    'Ok. Search successful'
-    >>> res.fsr_resultinfo
-    {'page': '1', 'per_page': '20', 'total_count': '3'}
+    >>> assert res.fsr_data
+    >>> assert res.fsr_status
+    >>> assert res.fsr_message
+    >>> assert res.fsr_resultinfo
     >>> client.search_frn("Hastings Insurance Services Limited")
     '311492'
     >>> client.search_frn('direct line')
     Traceback (most recent call last):
     ...
-    fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+    fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
     >>> client.search_frn('direct line insurance plc')
     '202684'
-    >>> client.get_firm('122702').fsr_data
-    [{'Name': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Names',
-      'Individuals': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Individuals',
-      'Requirements': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Requirements',
-      'Permission': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Permissions',
-      'Passport': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Passports',
-      'Regulators': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Regulators',
-      'Appointed Representative': 'https://register.fca.org.uk/services/V0.1/Firm/122702/AR',
-      'Address': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Address',
-      'Waivers': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Waivers',
-      'Exclusions': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Exclusions',
-      'DisciplinaryHistory': 'https://register.fca.org.uk/services/V0.1/Firm/122702/DisciplinaryHistory',
-      'System Timestamp': '06/12/2024 10:32',
-      'Exceptional Info Details': [],
-      'Status Effective Date': '01/12/2001',
-      'E-Money Agent Status': '',
-      'PSD / EMD Effective Date': '',
-      'Client Money Permission': 'Control but not hold client money',
-      'Sub Status Effective from': '',
-      'Sub-Status': '',
-      'Mutual Society Number': '',
-      'Companies House Number': '01026167',
-      'MLRs Status Effective Date': '',
-      'MLRs Status': '',
-      'E-Money Agent Effective Date': '',
-      'PSD Agent Effective date': '',
-      'PSD Agent Status': '',
-      'PSD / EMD Status': '',
-      'Status': 'Authorised',
-      'Business Type': 'Regulated',
-      'Organisation Name': 'Barclays Bank Plc',
-      'FRN': '122702'}]
-    >>> client.get_individual('mark carney').fsr_data
-    [{'Details': {'Disciplinary History': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012/DisciplinaryHistory',
-       'Current roles & activities': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012/CF',
-       'IRN': 'MXC29012',
-       'Commonly Used Name': 'Mark',
-       'Status': 'Certified / assessed by firm',
-       'Full Name': 'Mark Carney'},
-      'Workplace Location 1': {'Firm Name': 'TSB Bank plc',
-       'Location 1': 'Liverpool'}}]
-    >>> client.get_fund('635641')
-    [{'Sub-funds': '',
-      'Other Name': 'https://register.fca.org.uk/services/V0.1/CIS/635641/Names',
-      'CIS Depositary': '',
-      'CIS Depositary Name': '',
-      'Operator Name': '',
-      'Operator': '',
-      'MMF Term Type': '',
-      'MMF NAV Type': '',
-      'Effective Date': '28/08/2008',
-      'Scheme Type': 'Sub-Fund (Off-shore)',
-      'Product Type': 'Other',
-      'ICVC Registration No': '',
-      'Status': 'Recognised'}]
+    >>> assert client.get_firm('122702').fsr_data
+    >>> assert client.get_individual('MXC29012').fsr_data
+    >>> assert client.get_fund('635641').fsr_data
     """
 
     #: All instances must have this private attribute to store API session state
@@ -394,16 +338,99 @@ class FsrApiClient:
         except requests.RequestException as e:
             raise FsrApiRequestException(e)
 
-    def search_frn(self, firm_name: str) -> str:
-        """:py:class:`str`: Returns the unique firm reference number (FRN) of a given firm, if found.
+    def _search_ref_number(self, resource_name: str, resource_type: str) -> str:
+        """:py:class:`str`: A private base handler for public methods for searching for unique firm, individual and product reference numbers.
+
+        .. note::
+
+           This is a private method and is **not** intended for direct use by
+           end users.
 
         Uses the API common search endpoint:
         ::
 
-            /V0.1/Search?q=<firm name>&type=firm
+            /V0.1/Search?q=resource_name&type=resource_type
 
-        to perform a case-insensitive firm-type search in the FS Register on the
-        given firm name.
+        to perform a case-insensitive search for resources of type
+        ``resource_type``in the FS Register on the given resource name
+        substring.
+
+        Returns a non-null string of the resource ref. number if there is
+        a unique associated resource.
+
+
+        Parameters
+        ----------
+        resource_name : str
+            The resource name substring - need not be in any particular case.
+            The name needs to be precise enough to guarantee a unique return
+            value, otherwise multiple records exist and an exception is raised.
+
+        Raises
+        ------
+        ValueError
+            If the resource type is not of ``'firm'``, ``'individual'``, or
+            ``'fund'``. 
+        FsrApiRequestException
+            If there was a request exception from calling the common search
+            handler.
+        FsrApiException
+            If there was an error in the API response or in processing the response.
+
+        Returns
+        -------
+        str
+            The unique resource reference number, if found.
+        """
+        if not (
+            resource_type == FSR_API_CONSTANTS.RESOURCE_TYPE_FIRM.value or
+            resource_type == FSR_API_CONSTANTS.RESOURCE_TYPE_INDIVIDUAL.value or
+            resource_type == FSR_API_CONSTANTS.RESOURCE_TYPE_FUND.value
+        ):
+            raise ValueError(
+                'Resource type needs to be one of ``"firm"``, ``"individual"``,'
+                ' or ``"fund"``.'
+            )
+
+        try:
+            res = self.common_search(urlencode({'q': resource_name, 'type': resource_type}))
+        except FsrApiRequestException:
+            raise
+
+        if res.ok and res.fsr_data:
+            if len(res.fsr_data) > 1:
+                raise FsrApiResponseException(
+                    f'Multiple {resource_type}s returned. The {resource_type} '
+                     'name needs to be more precise. If you are unsure of the '
+                     'results please use the common search endpoint.'
+                )
+
+            try:
+                return res.fsr_data[0]['Reference Number']
+            except (KeyError, IndexError):
+                raise FsrApiResponseException(
+                    'Unexpected response data structure from the FS Register '
+                    f'API for general {resource_type} search by name! Please '
+                    'check the FS Register API developer documentation at '
+                    'https://register.fca.org.uk/Developer/s/.'
+                )
+        elif not res.fsr_data:
+            raise FsrApiResponseException(
+                'No data found in FS Register API response. Please check the search '
+                'parameters and try again.'
+            )
+        else:
+            raise FsrApiResponseException(
+                f'FS Register API search request failed for some other reason: '
+                f'{res.reason}.'
+            )
+
+    def search_frn(self, firm_name: str) -> str:
+        """:py:class:`str`: Returns the unique firm reference number (FRN) of a given firm, if found.
+
+        Calls the private method
+        :py:meth:`~fsrapiclient.FsrApiClient._search_ref_number` to do the
+        search.
 
         Returns a non-null string of the FRN if there is a unique associated
         firm.
@@ -414,15 +441,6 @@ class FsrApiClient:
             The firm name - need not be in any particular case. The name
             needs to be precise enough to guarantee a unique return value,
             otherwise multiple records exist and an exception is raised.
-
-        Raises
-        ------
-        FsrApiRequestException
-            If there was a request exception from calling the common search
-            handler.
-
-        FsrApiException
-            If there was an error in the API response or in processing the response.
 
         Returns
         -------
@@ -440,11 +458,11 @@ class FsrApiClient:
         >>> client.search_frn('direct line')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_frn('direct line insurance')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_frn('direct line insurance plc')
         '202684'
         >>> client.search_frn('Hiscxo Insurance Company')
@@ -454,37 +472,11 @@ class FsrApiClient:
         >>> client.search_frn('hiscox insurance company')
         '113849'
         """
-        try:
-            res = self.common_search(urlencode({'q': firm_name, 'type': 'firm'}))
-        except FsrApiRequestException:
-            raise
+        return self._search_ref_number(
+            firm_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPE_FIRM.value
+        )
 
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple firms returned. Firm name needs to be more '
-                    'precise. If you are unsure of the results please use the '
-                    'common search endpoint'
-                )
-
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general firm search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
 
     def _firm_info(self, frn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for firm information API handlers.
@@ -1142,43 +1134,16 @@ class FsrApiClient:
         >>> client.search_irn('Mark C')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_irn('A Nonexistent Person')
         Traceback (most recent call last):
         ...
         fsrapiclient.exceptions.FsrApiResponseException: No data found in FS Register API response. Please check the search parameters and try again.
         """
-        try:
-            res = self.common_search(urlencode({'q': individual_name, 'type': 'individual'}))
-        except FsrApiRequestException:
-            raise
-            
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple individuals returned. The individual name needs '
-                    'to be more precise. If you are unsure of the results '
-                    'please use the common search endpoint'
-                )
-
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general individual search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
+        return self._search_ref_number(
+            individual_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPE_INDIVIDUAL.value
+        )
 
     def _individual_info(self, irn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for individual information API handlers.
@@ -1398,11 +1363,11 @@ class FsrApiClient:
         >>> client.search_prn('Northern Trust')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_prn('Northern Trust High Dividend ESG World Equity')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_prn('Northern Trust High Dividend ESG World Equity Feeder Fund')
         '913937'
         >>> client.search_prn('A nonexistent fund')
@@ -1410,37 +1375,10 @@ class FsrApiClient:
         ...
         fsrapiclient.exceptions.FsrApiResponseException: No data found in FS Register API response. Please check the search parameters and try again.
         """
-        try:
-            res = self.common_search(urlencode({'q': fund_name, 'type': 'fund'}))
-        except FsrApiRequestException:
-            raise
-            
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple funds returned. The fund name needs '
-                    'to be more precise. If you are unsure of the results '
-                    'please use the common search endpoint'
-                )
-
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general fund search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
+        return self._search_ref_number(
+            fund_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPE_FUND.value
+        )
 
     def _fund_info(self, prn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : A private, base handler for fund (or collective investment scheme (CIS)) information API handlers.

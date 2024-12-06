@@ -79,23 +79,33 @@ class TestFsrApiClient(_TestFsrApi):
         assert recv_response.fsr_message == 'No search result found'
         assert not recv_response.fsr_resultinfo
 
-    def test_fsr_api_client__search_frn__api_request_exception_raised(self):
+    def test_fsr_api_client___search_ref_number__resource_type_incorrect__value_error_raised(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        with pytest.raises(ValueError):
+            test_client._search_ref_number('resource_name', 'incorrect_resource_type')
+
+    def test_fsr_api_client___search_ref_number__exceptional_request__api_request_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
             mock_api_session_get.side_effect = requests.RequestException('test RequestException')
 
             with pytest.raises(FsrApiRequestException):
-                test_client.search_frn('exceptional search')
+                test_client._search_ref_number('exceptional search', 'firm')
+                test_client._search_ref_number('exceptional search', 'individual')
+                test_client._search_ref_number('exceptional search', 'fund')
 
-    def test_fsr_api_client__search_frn__response_not_ok__api_response_exception_raised(self):
+    def test_fsr_api_client___search_ref_number__response_not_ok__api_response_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiClient.common_search', return_value=mock.MagicMock(ok=False)):
             with pytest.raises(FsrApiResponseException):
-                test_client.search_frn('exceptional search')
+                test_client._search_ref_number('exceptional search', 'firm')
+                test_client._search_ref_number('exceptional search', 'individual')
+                test_client._search_ref_number('exceptional search', 'fund')
 
-    def test_fsr_api_client__search_frn__no_fsr_data_in_response__api_response_exception_raised(self):
+    def test_fsr_api_client___search_ref_number__no_fsr_data_in_response__api_response_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
@@ -104,9 +114,11 @@ class TestFsrApiClient(_TestFsrApi):
             mock_api_session_get.return_value = mock_response
 
             with pytest.raises(FsrApiResponseException):
-                test_client.search_frn('exceptional search')
+                test_client._search_ref_number('exceptional search', 'firm')
+                test_client._search_ref_number('exceptional search', 'individual')
+                test_client._search_ref_number('exceptional search', 'fund')
 
-    def test_fsr_api_client__search_frn__fsr_data_with_index_error__api_response_exception_raised(self):
+    def test_fsr_api_client___search_ref_number__fsr_data_with_index_error__api_response_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
@@ -115,9 +127,11 @@ class TestFsrApiClient(_TestFsrApi):
             mock_api_session_get.return_value = mock_response
 
             with pytest.raises(FsrApiResponseException):
-                test_client.search_frn('exceptional search')
+                test_client._search_ref_number('exceptional search', 'firm')
+                test_client._search_ref_number('exceptional search', 'individual')
+                test_client._search_ref_number('exceptional search', 'fund')
 
-    def test_fsr_api_client__search_frn__fsr_data_with_key_error__api_response_exception_raised(self):
+    def test_fsr_api_client___search_ref_number__fsr_data_with_key_error__api_response_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
@@ -126,24 +140,76 @@ class TestFsrApiClient(_TestFsrApi):
             mock_api_session_get.return_value = mock_response
 
             with pytest.raises(FsrApiResponseException):
-                test_client.search_frn('exceptional search')
+                test_client._search_ref_number('exceptional search', 'firm')
+                test_client._search_ref_number('exceptional search', 'individual')
+                test_client._search_ref_number('exceptional search', 'fund')
 
-    def test_fsr_api_client__search_frn__no_request_exception(self):
+    def test_fsr_api_client___search_ref_number__incorrectly_specified_resource__no_fsr_data__api_response_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
-
-        # Covers the case of a successful FRN search for an existing firm
-        recv_frn = test_client.search_frn('hiscox insurance company')
-        assert isinstance(recv_frn, str)
-        assert recv_frn
 
         # Covers the case of a failed FRN search for an incorrectly specified firm
         with pytest.raises(FsrApiResponseException):
-            test_client.search_frn('nonexistent123 insurance company')
+            test_client._search_ref_number('nonexistent123 insurance company', 'firm')
+
+        # Covers the case of a failed IRN search for an incorrectly specified individual
+        with pytest.raises(FsrApiResponseException):
+            test_client._search_ref_number('a nonexistent individual', 'individual')
+
+        # Covers the case of a failed PRN search for an incorrectly specified firm
+        with pytest.raises(FsrApiResponseException):
+            test_client._search_ref_number('a nonexistent fund', 'fund')
+
+    def test_fsr_api_client___search_ref_number__inadequately_specified_resource__nonunique_fsr_data__api_response_exception_raised(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
 
         # Covers the case of an FRN search based on an inadequately specified firm
         # that produces multiple results
         with pytest.raises(FsrApiResponseException):
-            test_client.search_frn('direct line')
+            test_client._search_ref_number('direct line', 'firm')
+
+        # Covers the case of an IRN search based on an inadequately specified individual
+        # that produces multiple results
+        with pytest.raises(FsrApiResponseException):
+            test_client._search_ref_number('john smith', 'individual')
+
+        # Covers the case of an PRN search based on an inadequately specified firm
+        # that produces multiple results
+        with pytest.raises(FsrApiResponseException):
+            test_client._search_ref_number('jupiter', 'fund')
+
+    def test_fsr_api_client___search_ref_number__correctly_and_adequately_specced_resource__unique_fsr_data__response_returned_ok(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        # Covers the case of a successful FRN search for an existing firm
+        recv_frn = test_client._search_ref_number('hiscox insurance company', 'firm')
+        assert isinstance(recv_frn, str)
+        assert recv_frn
+
+        # Covers the case of a successful IRN search for an existing individual
+        recv_irn = test_client._search_ref_number('mark carney', 'individual')
+        assert isinstance(recv_irn, str)
+        assert recv_irn
+
+        # Covers the case of a successful PRN search for an existing fund
+        recv_prn = test_client._search_ref_number('jupiter asia pacific income', 'fund')
+        assert isinstance(recv_prn, str)
+        assert recv_prn
+
+    def test_fsr_api_client___search_frn__correctly_and_adequately_specced_firm__unique_fsr_data__response_returned_ok(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        # Covers the case of a successful FRN search for existing, unique firms
+        recv_frn = test_client.search_frn('hiscox insurance company')
+        assert isinstance(recv_frn, str)
+        assert recv_frn
+
+        recv_frn = test_client.search_frn('hastings insurance services limited')
+        assert isinstance(recv_frn, str)
+        assert recv_frn
+
+        recv_frn = test_client.search_frn('citibank europe luxembourg')
+        assert isinstance(recv_frn, str)
+        assert recv_frn
 
     def test_fsr_api_client___firm_info__no_modifiers__request_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
@@ -606,71 +672,21 @@ class TestFsrApiClient(_TestFsrApi):
             recv_response.fsr_data['CurrentAppointedRepresentatives']
         ])
 
-    def test_fsr_api_client__search_irn__api_request_exception_raised(self):
+    def test_fsr_api_client___search_irn__correctly_and_adequately_specced_individual__unique_fsr_data__response_returned_ok(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
+        # Covers the case of a successful IRN search for existing, unique individuals
+        recv_irn = test_client.search_irn('mark carney')
+        assert isinstance(recv_irn, str)
+        assert recv_irn
 
-            with pytest.raises(FsrApiRequestException):
-                test_client.search_irn('exceptional search')
+        recv_irn = test_client.search_irn('lynne elizabeth atkinson')
+        assert isinstance(recv_irn, str)
+        assert recv_irn
 
-    def test_fsr_api_client__search_irn__response_not_ok__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiClient.common_search', return_value=mock.MagicMock(ok=False)):
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_irn('exceptional search')
-
-    def test_fsr_api_client__search_irn__no_fsr_data_in_response__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value=dict())
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_irn('exceptional search')
-
-    def test_fsr_api_client__search_irn__fsr_data_with_index_error__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value={'Data': []})
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_irn('exceptional search')
-
-    def test_fsr_api_client__search_irn__fsr_data_with_key_error__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value={'Data': [{'not a Reference Number': None}]})
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_irn('exceptional search')
-
-    def test_fsr_api_client__search_irn__no_api_request_exception(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        # Covers the case of a successful IRN searh for an existing individual
-        recv_frn = test_client.search_irn('mark carney')
-        assert isinstance(recv_frn, str)
-        assert recv_frn
-
-        # Covers the case of a failed IRN search for an incorrectly specified individual
-        with pytest.raises(FsrApiResponseException):
-            test_client.search_irn('a nonexistent person')
-
-        # Covers the case of an IRN search based on an inadequately specified individual
-        # that produces multiple results
-        with pytest.raises(FsrApiResponseException):
-            test_client.search_irn('mark C')
+        recv_irn = test_client.search_irn('margaretha jensen')
+        assert isinstance(recv_irn, str)
+        assert recv_irn
 
     def test_fsr_api_client___individual_info__no_modifiers__request_exception_raised_and_propagated(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
@@ -780,71 +796,21 @@ class TestFsrApiClient(_TestFsrApi):
         assert recv_response.ok
         assert not recv_response.fsr_data
 
-    def test_fsr_api_client__search_prn__api_request_exception_raised(self):
+    def test_fsr_api_client___search_prn__correctly_and_adequately_specced_fund__unique_fsr_data__response_returned_ok(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
-
-            with pytest.raises(FsrApiRequestException):
-                test_client.search_prn('exceptional search')
-
-    def test_fsr_api_client__search_prn__response_not_ok__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiClient.common_search', return_value=mock.MagicMock(ok=False)):
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_prn('exceptional search')
-
-    def test_fsr_api_client__search_prn__no_fsr_data_in_response__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value=dict())
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_prn('exceptional search')
-
-    def test_fsr_api_client__search_prn__fsr_data_with_index_error__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value={'Data': []})
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_prn('exceptional search')
-
-    def test_fsr_api_client__search_prn__fsr_data_with_key_error__api_response_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_response = mock.create_autospec(requests.Response)
-            mock_response.json = mock.MagicMock(name='json', return_value={'Data': [{'not a Reference Number': None}]})
-            mock_api_session_get.return_value = mock_response
-
-            with pytest.raises(FsrApiResponseException):
-                test_client.search_prn('exceptional search')
-
-    def test_fsr_api_client__search_prn__no_api_request_exception(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        # Covers the case of a successful PRN searh for an existing fund
-        recv_prn = test_client.search_prn('jupiter asia pacific income fund')
+        # Covers the case of a successful PRN search for existing, unique funds
+        recv_prn = test_client.search_prn('jupiter asia pacific income')
         assert isinstance(recv_prn, str)
         assert recv_prn
 
-        # Covers the case of a failed PRN search for an incorrectly specified fund
-        with pytest.raises(FsrApiResponseException):
-            test_client.search_prn('a nonexistent fund')
+        recv_prn = test_client.search_prn('abrdn sterling short term government bond')
+        assert isinstance(recv_prn, str)
+        assert recv_prn
 
-        # Covers the case of a PRN search based on an inadequately specified fund
-        # name that produces multiple results
-        with pytest.raises(FsrApiResponseException):
-            test_client.search_prn('jupiter asia pacific')
+        recv_prn = test_client.search_prn('northern trust high dividend esg world equity feeder')
+        assert isinstance(recv_prn, str)
+        assert recv_prn
 
     def test_fsr_api_client___fund_info__no_modifiers__request_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
