@@ -132,7 +132,7 @@ class FsrApiResponse(requests.models.Response):
 
         Parameters
         ----------
-        response : :py:class:`requests.Response`
+        response : requests.Response
             The response from the original request.
         """    
         self.__dict__.update(**response.__dict__)
@@ -213,8 +213,64 @@ class FsrApiClient:
     fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
     >>> client.search_frn('direct line insurance plc')
     '202684'
+    >>> client.get_firm('122702').fsr_data
+    [{'Name': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Names',
+      'Individuals': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Individuals',
+      'Requirements': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Requirements',
+      'Permission': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Permissions',
+      'Passport': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Passports',
+      'Regulators': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Regulators',
+      'Appointed Representative': 'https://register.fca.org.uk/services/V0.1/Firm/122702/AR',
+      'Address': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Address',
+      'Waivers': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Waivers',
+      'Exclusions': 'https://register.fca.org.uk/services/V0.1/Firm/122702/Exclusions',
+      'DisciplinaryHistory': 'https://register.fca.org.uk/services/V0.1/Firm/122702/DisciplinaryHistory',
+      'System Timestamp': '06/12/2024 10:32',
+      'Exceptional Info Details': [],
+      'Status Effective Date': '01/12/2001',
+      'E-Money Agent Status': '',
+      'PSD / EMD Effective Date': '',
+      'Client Money Permission': 'Control but not hold client money',
+      'Sub Status Effective from': '',
+      'Sub-Status': '',
+      'Mutual Society Number': '',
+      'Companies House Number': '01026167',
+      'MLRs Status Effective Date': '',
+      'MLRs Status': '',
+      'E-Money Agent Effective Date': '',
+      'PSD Agent Effective date': '',
+      'PSD Agent Status': '',
+      'PSD / EMD Status': '',
+      'Status': 'Authorised',
+      'Business Type': 'Regulated',
+      'Organisation Name': 'Barclays Bank Plc',
+      'FRN': '122702'}]
+    >>> client.get_individual('mark carney').fsr_data
+    [{'Details': {'Disciplinary History': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012/DisciplinaryHistory',
+       'Current roles & activities': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012/CF',
+       'IRN': 'MXC29012',
+       'Commonly Used Name': 'Mark',
+       'Status': 'Certified / assessed by firm',
+       'Full Name': 'Mark Carney'},
+      'Workplace Location 1': {'Firm Name': 'TSB Bank plc',
+       'Location 1': 'Liverpool'}}]
+    >>> client.get_fund('635641')
+    [{'Sub-funds': '',
+      'Other Name': 'https://register.fca.org.uk/services/V0.1/CIS/635641/Names',
+      'CIS Depositary': '',
+      'CIS Depositary Name': '',
+      'Operator Name': '',
+      'Operator': '',
+      'MMF Term Type': '',
+      'MMF NAV Type': '',
+      'Effective Date': '28/08/2008',
+      'Scheme Type': 'Sub-Fund (Off-shore)',
+      'Product Type': 'Other',
+      'ICVC Registration No': '',
+      'Status': 'Recognised'}]
     """
 
+    #: All instances must have this private attribute to store API session state
     _api_session: FsrApiSession
 
     def __init__(self, api_username: str, api_key: str) -> None:
