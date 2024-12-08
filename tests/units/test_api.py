@@ -211,195 +211,211 @@ class TestFsrApiClient(_TestFsrApi):
         assert isinstance(recv_frn, str)
         assert recv_frn
 
-    def test_fsr_api_client___firm_info__no_modifiers__request_exception_raised(self):
+    def test_fsr_api_client___get_resource_info__invalid_resource_type__no_modifiers__value_error_raised(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        with pytest.raises(ValueError):
+            test_client._get_resource_info('test_ref_number', 'invalid resource type')
+
+    def test_fsr_api_client___get_resource_info__invalid_resource_type__modifiers__value_error_raised(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        with pytest.raises(ValueError):
+            test_client._get_resource_info('test_ref_number', 'invalid resource type', modifiers=('test_modifier1', 'test_modifier2',))
+
+    def test_fsr_api_client___get_resource_info__no_modifiers__request_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
             mock_api_session_get.side_effect = requests.RequestException('test RequestException')
 
             with pytest.raises(FsrApiRequestException):
-                test_client._firm_info('test_frn')
+                test_client._get_resource_info('test_frn', 'firm')
+                test_client._get_resource_info('test_prn', 'fund')
+                test_client._get_resource_info('test_irn', 'individual')
 
-    def test_fsr_api_client___firm_info__modifiers__request_exception_raised(self):
+    def test_fsr_api_client___get_resource_info__modifiers__request_exception_raised(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
             mock_api_session_get.side_effect = requests.RequestException('test RequestException')
 
             with pytest.raises(FsrApiRequestException):
-                test_client._firm_info('test_frn', modifiers=('test_modifier1', 'test_modifier2',))
+                test_client._get_resource_info('test_frn', 'firm', modifiers=('test_modifier1', 'test_modifier2',))
+                test_client._get_resource_info('test_prn', 'fund', modifiers=('test_modifier1', 'test_modifier2',))
+                test_client._get_resource_info('test_irn', 'individual', modifiers=('test_modifier1', 'test_modifier2',))
 
-    def test_fsr_api_client___firm_info(self):
+    def test_fsr_api_client___get_resource_info__firm(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
         # Covers the case of a request for an existing firm which is
         # Hiscox Insurance Company Limited with the FRN 113849
-        recv_response = test_client._firm_info('113849')
+        recv_response = test_client._get_resource_info('113849', 'firm')
         assert recv_response.ok
         assert recv_response.fsr_data
         assert recv_response.fsr_data[0]['Organisation Name'] == 'Hiscox Insurance Company Limited'
 
         # Covers the case of a request for an non-existent firm given by
         # a non-existent FRN 1234567890
-        recv_response = test_client._firm_info('1234567890')
+        recv_response = test_client._get_resource_info('1234567890', 'firm')
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the secondary or
         # alternative business or trading names used by Hiscox Insurance
         # Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Names',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Names',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the secondary or alternative business
         # or trading names of a non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Names',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Names',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the listed business
         # address of Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Address',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Address',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the listed business address of a non-
         # existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Address',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Address',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the controlled functions
         # (CF) of Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('CF',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('CF',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the controlled functions (CF) of a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('CF',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('CF',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the individuals
         # associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Individuals',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Individuals',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the individuals associated with a
         # existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Individuals',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Individuals',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the activities and
         # permissions associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Permissions',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Permissions',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the activities and permissions
         # associated with a non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Permissions',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Permissions',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the requirements
         # associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Requirements',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Requirements',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the requirements associated with a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Requirements',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Requirements',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the investment types
         # associated with a specific requirement associated with Hiscox Insurance
         # Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Requirements', 'OR-0131728', 'InvestmentTypes',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Requirements', 'OR-0131728', 'InvestmentTypes',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the regulators
         # listed for Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Regulators',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Regulators',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the regulators listed for a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Regulators',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Regulators',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the passports
         # associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Passports',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Passports',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the passports associated with a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Passports',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Passports',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the passports
         # for a specific country, Gibraltar, associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Passports', 'Gibraltar', 'Permission',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Passports', 'Gibraltar', 'Permission',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the passports for a specific country
         # associated with a non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Passports', 'Gibraltar', 'Permission',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Passports', 'Gibraltar', 'Permission',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for any waivers
         # associated with Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('Waivers',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('Waivers',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for any waivers associated with a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Waivers',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Waivers',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for any exclusions
         # applying to Barclays Bank plc (FRN 122702)
-        recv_response = test_client._firm_info('122702', modifiers=('Exclusions',))
+        recv_response = test_client._get_resource_info('122702', 'firm', modifiers=('Exclusions',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for any exclusions applying to a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('Exclusions',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('Exclusions',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the disciplinary history
         # of Barclays Bank plc (FRN 122702)
-        recv_response = test_client._firm_info('122702', modifiers=('DisciplinaryHistory',))
+        recv_response = test_client._get_resource_info('122702', 'firm', modifiers=('DisciplinaryHistory',))
         assert recv_response.ok
         assert recv_response.fsr_data
 
         # Covers the case of a request for the disciplinary history of a
         # non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('DisciplinaryHistory',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('DisciplinaryHistory',))
         assert recv_response.ok
         assert not recv_response.fsr_data
 
         # Covers the case of a request for the appointed representatives of
         # Hiscox Insurance Company Limited (FRN 113849)
-        recv_response = test_client._firm_info('113849', modifiers=('AR',))
+        recv_response = test_client._get_resource_info('113849', 'firm', modifiers=('AR',))
         assert recv_response.ok
         assert (
             recv_response.fsr_data['PreviousAppointedRepresentatives'] or 
@@ -408,10 +424,107 @@ class TestFsrApiClient(_TestFsrApi):
 
         # Covers the case of a request for the appointed representatives
         # of a non-existent firm
-        recv_response = test_client._firm_info('1234567890', modifiers=('AR',))
+        recv_response = test_client._get_resource_info('1234567890', 'firm', modifiers=('AR',))
         assert recv_response.ok
         assert not recv_response.fsr_data['PreviousAppointedRepresentatives']
         assert not recv_response.fsr_data['CurrentAppointedRepresentatives']
+
+    def test_fsr_api_client___get_resource_info__fund(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        # Covers the case of a request for an existing fund which is
+        # 'Jupiter Asia Pacific Income Fund (IRL)' with the PRN 1006826
+        recv_response = test_client._get_resource_info('1006826', 'fund')
+        assert recv_response.ok
+        assert recv_response.fsr_data
+
+        # Covers the case of a request for an non-existent fund given by
+        # a non-existent PRN 1234567890
+        recv_response = test_client._get_resource_info('1234567890', 'fund')
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the subfund details of an
+        # existing fund with PRN 185045
+        recv_response = test_client._get_resource_info('185045', 'fund', modifiers=('Subfund',))
+        assert recv_response.ok
+        assert recv_response.fsr_data
+
+        # Covers the case of a request for the non-existent subfund details of an
+        # existing fund with PRN 1006826
+        recv_response = test_client._get_resource_info('1006826', 'fund', modifiers=('Subfund',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the non-existent subfund details
+        # of a non-existent fund
+        recv_response = test_client._get_resource_info('1234567890', 'fund', modifiers=('Subfund',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the alternative or secondary trading
+        # names of an existing fund with PRN 185045
+        recv_response = test_client._get_resource_info('185045', 'fund', modifiers=('Names',))
+        assert recv_response.ok
+        assert recv_response.fsr_data
+
+        # Covers the case of a request for the non-existent alternative or
+        # secondary trading names of an existing fund with PRN 1006826
+        recv_response = test_client._get_resource_info('1006826', 'fund', modifiers=('Names',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the non-existent alternative or
+        # secondary trading names of a non-existing fund with a non-existent
+        # PRN 1234567890
+        recv_response = test_client._get_resource_info('1234567890', 'fund', modifiers=('Names',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+    def test_fsr_api_client___get_resource_info__individual(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        # Covers the case of a request for an existing individual
+        # 'Mark Carney'(IRN 'MXC29012')
+        recv_response = test_client._get_resource_info('MXC29012', 'individual')
+        assert recv_response.ok
+        assert recv_response.fsr_data
+        assert recv_response.fsr_data[0]['Details']['Full Name'] == 'Mark Carney'
+
+        # Covers the case of a request for an non-existent individual
+        recv_response = test_client._get_resource_info('1234567890', 'individual')
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the controlled functions
+        # associated with an existing individual, 'Mark Carney'
+        recv_response = test_client._get_resource_info('MXC29012', 'individual', modifiers=('CF',))
+        assert recv_response.ok
+        assert recv_response.fsr_data
+
+        # Covers the case of a request for the controlled functions associated
+        # with a non-existent individual
+        recv_response = test_client._get_resource_info('1234567890', 'individual', modifiers=('CF',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the disciplinary history
+        # of an individual, 'Leigh Mackey' (IRN 'LXM01328')
+        recv_response = test_client._get_resource_info('LXM01328', 'individual', modifiers=('DisciplinaryHistory',))
+        assert recv_response.ok
+        assert recv_response.fsr_data
+
+        # Covers the case of an unrequest for the disciplinary history
+        # of an individual, 'Mark Carney' (IRN 'MXC29012')
+        recv_response = test_client._get_resource_info('MXC29012', 'individual', modifiers=('DisciplinaryHistory',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+
+        # Covers the case of a request for the disciplinary history of a non-
+        # existent individual
+        recv_response = test_client._get_resource_info('1234567890', 'individual', modifiers=('DisciplinaryHistory',))
+        assert recv_response.ok
+        assert not recv_response.fsr_data
 
     def test_fsr_api_client__get_firm(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
@@ -688,69 +801,6 @@ class TestFsrApiClient(_TestFsrApi):
         assert isinstance(recv_irn, str)
         assert recv_irn
 
-    def test_fsr_api_client___individual_info__no_modifiers__request_exception_raised_and_propagated(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
-
-            with pytest.raises(FsrApiRequestException):
-                test_client._individual_info('test_irn')
-
-    def test_fsr_api_client___individual_info__modifiers__request_exception_raised_and_propagated(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
-
-            with pytest.raises(FsrApiRequestException):
-                test_client._individual_info('test_irn', modifiers=('test_modifier1', 'test_modifier2',))
-
-    def test_fsr_api_client___individual_info(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        # Covers the case of a request for an existing individual
-        # 'Mark Carney'(IRN 'MXC29012')
-        recv_response = test_client._individual_info('MXC29012')
-        assert recv_response.ok
-        assert recv_response.fsr_data
-        assert recv_response.fsr_data[0]['Details']['Full Name'] == 'Mark Carney'
-
-        # Covers the case of a request for an non-existent individual
-        recv_response = test_client._individual_info('1234567890')
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the controlled functions
-        # associated with an existing individual, 'Mark Carney'
-        recv_response = test_client._individual_info('MXC29012', modifiers=('CF',))
-        assert recv_response.ok
-        assert recv_response.fsr_data
-
-        # Covers the case of a request for the controlled functions associated
-        # with a non-existent individual
-        recv_response = test_client._individual_info('1234567890', modifiers=('CF',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the disciplinary history
-        # of an individual, 'Leigh Mackey' (IRN 'LXM01328')
-        recv_response = test_client._individual_info('LXM01328', modifiers=('DisciplinaryHistory',))
-        assert recv_response.ok
-        assert recv_response.fsr_data
-
-        # Covers the case of an unrequest for the disciplinary history
-        # of an individual, 'Mark Carney' (IRN 'MXC29012')
-        recv_response = test_client._individual_info('MXC29012', modifiers=('DisciplinaryHistory',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the disciplinary history of a non-
-        # existent individual
-        recv_response = test_client._firm_info('1234567890', modifiers=('DisciplinaryHistory',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
     def test_fsr_api_client__get_individual(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
@@ -811,76 +861,6 @@ class TestFsrApiClient(_TestFsrApi):
         recv_prn = test_client.search_prn('northern trust high dividend esg world equity feeder')
         assert isinstance(recv_prn, str)
         assert recv_prn
-
-    def test_fsr_api_client___fund_info__no_modifiers__request_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
-
-            with pytest.raises(FsrApiRequestException):
-                test_client._fund_info('test_prn')
-
-    def test_fsr_api_client___fund_info__modifiers__request_exception_raised(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        with mock.patch('fsrapiclient.api.FsrApiSession.get') as mock_api_session_get:
-            mock_api_session_get.side_effect = requests.RequestException('test RequestException')
-
-            with pytest.raises(FsrApiRequestException):
-                test_client._fund_info('test_prn', modifiers=('test_modifier1', 'test_modifier2',))
-
-    def test_fsr_api_client___fund_info(self):
-        test_client = FsrApiClient(self._api_username, self._api_key)
-
-        # Covers the case of a request for an existing fund which is
-        # 'Jupiter Asia Pacific Income Fund (IRL)' with the PRN 1006826
-        recv_response = test_client._fund_info('1006826')
-        assert recv_response.ok
-        assert recv_response.fsr_data
-
-        # Covers the case of a request for an non-existent fund given by
-        # a non-existent PRN 1234567890
-        recv_response = test_client._fund_info('1234567890')
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the subfund details of an
-        # existing fund with PRN 185045
-        recv_response = test_client._fund_info('185045', modifiers=('Subfund',))
-        assert recv_response.ok
-        assert recv_response.fsr_data
-
-        # Covers the case of a request for the non-existent subfund details of an
-        # existing fund with PRN 1006826
-        recv_response = test_client._fund_info('1006826', modifiers=('Subfund',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the non-existent subfund details
-        # of a non-existent fund
-        recv_response = test_client._fund_info('1234567890', modifiers=('Subfund',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the alternative or secondary trading
-        # names of an existing fund with PRN 185045
-        recv_response = test_client._fund_info('185045', modifiers=('Names',))
-        assert recv_response.ok
-        assert recv_response.fsr_data
-
-        # Covers the case of a request for the non-existent alternative or
-        # secondary trading names of an existing fund with PRN 1006826
-        recv_response = test_client._fund_info('1006826', modifiers=('Names',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
-
-        # Covers the case of a request for the non-existent alternative or
-        # secondary trading names of a non-existing fund with a non-existent
-        # PRN 1234567890
-        recv_response = test_client._fund_info('1234567890', modifiers=('Names',))
-        assert recv_response.ok
-        assert not recv_response.fsr_data
 
     def test_fsr_api_client__get_fund(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
