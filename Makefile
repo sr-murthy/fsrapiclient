@@ -66,6 +66,7 @@ unittests: clean
 				--cov-report=term-missing:skip-covered \
 				--dist worksteal \
 				--numprocesses=auto \
+				-ra \
 				--tb=native \
 				--verbosity=3 \
 				tests/units
