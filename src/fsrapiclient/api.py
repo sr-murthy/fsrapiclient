@@ -132,7 +132,7 @@ class FsrApiResponse(requests.models.Response):
 
         Parameters
         ----------
-        response : :py:class:`requests.Response`
+        response : requests.Response
             The response from the original request.
         """    
         self.__dict__.update(**response.__dict__)
@@ -197,24 +197,24 @@ class FsrApiClient:
     >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
     >>> res
     <Response [200]>
-    >>> res.fsr_data
-    [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/969197', 'Status': 'Authorised', 'Reference Number': '969197', 'Type of business or Individual': 'Firm', 'Name': 'Hastings Financial Services Limited (Postcode: TN39 3LW)'}, {'URL': 'https://register.fca.org.uk/services/V0.1/Firm/311492', 'Status': 'Authorised', 'Reference Number': '311492', 'Type of business or Individual': 'Firm', 'Name': 'Hastings Insurance Services Limited (Postcode: TN39 3LW)'}, {'URL': 'https://register.fca.org.uk/services/V0.1/Firm/536726', 'Status': 'Authorised', 'Reference Number': '536726', 'Type of business or Individual': 'Firm', 'Name': 'I Go 4 Ltd. (Postcode: PE4 6JT)'}]
-    >>> res.fsr_status
-    'FSR-API-04-01-00'
-    >>> res.fsr_message
-    'Ok. Search successful'
-    >>> res.fsr_resultinfo
-    {'page': '1', 'per_page': '20', 'total_count': '3'}
+    >>> assert res.fsr_data
+    >>> assert res.fsr_status
+    >>> assert res.fsr_message
+    >>> assert res.fsr_resultinfo
     >>> client.search_frn("Hastings Insurance Services Limited")
     '311492'
     >>> client.search_frn('direct line')
     Traceback (most recent call last):
     ...
-    fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+    fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
     >>> client.search_frn('direct line insurance plc')
     '202684'
+    >>> assert client.get_firm('122702').fsr_data
+    >>> assert client.get_individual('MXC29012').fsr_data
+    >>> assert client.get_fund('635641').fsr_data
     """
 
+    #: All instances must have this private attribute to store API session state
     _api_session: FsrApiSession
 
     def __init__(self, api_username: str, api_key: str) -> None:
@@ -338,16 +338,95 @@ class FsrApiClient:
         except requests.RequestException as e:
             raise FsrApiRequestException(e)
 
-    def search_frn(self, firm_name: str) -> str:
-        """:py:class:`str`: Returns the unique firm reference number (FRN) of a given firm, if found.
+    def _search_ref_number(self, resource_name: str, resource_type: str) -> str:
+        """:py:class:`str`: A private base handler for public methods for searching for unique firm, individual and product reference numbers.
+
+        .. note::
+
+           This is a private method and is **not** intended for direct use by
+           end users.
 
         Uses the API common search endpoint:
         ::
 
-            /V0.1/Search?q=<firm name>&type=firm
+            /V0.1/Search?q=resource_name&type=resource_type
 
-        to perform a case-insensitive firm-type search in the FS Register on the
-        given firm name.
+        to perform a case-insensitive search for resources of type
+        ``resource_type``in the FS Register on the given resource name
+        substring.
+
+        Returns a non-null string of the resource ref. number if there is
+        a unique associated resource.
+
+
+        Parameters
+        ----------
+        resource_name : str
+            The resource name substring - need not be in any particular case.
+            The name needs to be precise enough to guarantee a unique return
+            value, otherwise multiple records exist and an exception is raised.
+
+        Raises
+        ------
+        ValueError
+            If the resource type is not of ``'firm'``, ``'individual'``, or
+            ``'fund'``. 
+        FsrApiRequestException
+            If there was a request exception from calling the common search
+            handler.
+        FsrApiException
+            If there was an error in the API response or in processing the response.
+
+        Returns
+        -------
+        str
+            The unique resource reference number, if found.
+        """
+        if resource_type not in FSR_API_CONSTANTS.RESOURCE_TYPES.value:
+            raise ValueError(
+                'Resource type must be one of the strings ``"firm"``, '
+                '``"fund"``, or ``"individual"``'
+            )
+
+        try:
+            res = self.common_search(urlencode({'q': resource_name, 'type': resource_type}))
+        except FsrApiRequestException:
+            raise
+
+        if res.ok and res.fsr_data:
+            if len(res.fsr_data) > 1:
+                raise FsrApiResponseException(
+                    f'Multiple {resource_type}s returned. The {resource_type} '
+                     'name needs to be more precise. If you are unsure of the '
+                     'results please use the common search endpoint.'
+                )
+
+            try:
+                return res.fsr_data[0]['Reference Number']
+            except (KeyError, IndexError):
+                raise FsrApiResponseException(
+                    'Unexpected response data structure from the FS Register '
+                    f'API for general {resource_type} search by name! Please '
+                    'check the FS Register API developer documentation at '
+                    'https://register.fca.org.uk/Developer/s/.'
+                )
+        elif not res.fsr_data:
+            raise FsrApiResponseException(
+                'No data found in FS Register API response. Please check the search '
+                'parameters and try again.'
+            )
+        else:
+            raise FsrApiResponseException(
+                f'FS Register API search request failed for some other reason: '
+                f'{res.reason}.'
+            )
+
+    def search_frn(self, firm_name: str) -> str:
+        """:py:class:`str`: Returns the unique firm reference number (FRN) of a given firm, if found.
+
+        Calls the private method
+        :py:meth:`~fsrapiclient.FsrApiClient._search_ref_number` to do the
+        search.
 
         Returns a non-null string of the FRN if there is a unique associated
         firm.
@@ -358,15 +437,6 @@ class FsrApiClient:
             The firm name - need not be in any particular case. The name
             needs to be precise enough to guarantee a unique return value,
             otherwise multiple records exist and an exception is raised.
-
-        Raises
-        ------
-        FsrApiRequestException
-            If there was a request exception from calling the common search
-            handler.
-
-        FsrApiException
-            If there was an error in the API response or in processing the response.
 
         Returns
         -------
@@ -384,11 +454,11 @@ class FsrApiClient:
         >>> client.search_frn('direct line')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_frn('direct line insurance')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. Firm name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple firms returned. The firm name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_frn('direct line insurance plc')
         '202684'
         >>> client.search_frn('Hiscxo Insurance Company')
@@ -398,44 +468,21 @@ class FsrApiClient:
         >>> client.search_frn('hiscox insurance company')
         '113849'
         """
-        try:
-            res = self.common_search(urlencode({'q': firm_name, 'type': 'firm'}))
-        except FsrApiRequestException:
-            raise
+        return self._search_ref_number(
+            firm_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name']
+        )
 
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple firms returned. Firm name needs to be more '
-                    'precise. If you are unsure of the results please use the '
-                    'common search endpoint'
-                )
 
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general firm search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
+    def _get_resource_info(self, resource_ref_number: str, resource_type: str, modifiers: tuple[str] = None) -> FsrApiResponse:
+        """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for resource information API handlers.
 
-    def _firm_info(self, frn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for firm information API handlers.
-
-        Is the base handler for the following firm-specific API endpoints (in alphabetical order):
+        Is the base handler for the following resource informational API endpoints (in alphabetical order):
         ::
 
+            /V0.1/CIS/{PRN}
+            /V0.1/CIS/{PRN}/Names
+            /V0.1/CIS/{PRN}/Subfund
             /V0.1/Firm/{FRN}
             /V0.1/Firm/{FRN}/Address
             /V0.1/Firm/{FRN}/AR
@@ -451,27 +498,28 @@ class FsrApiClient:
             /V0.1/Firm/{FRN}/Requirements
             /V0.1/Firm/{FRN}/Requirements/{ReqRef}/InvestmentTypes
             /V0.1/Firm/{FRN}/Waiver
+            /V0.1/Individuals/{IRN}
+            /V0.1/Individuals/{IRN}/CF
+            /V0.1/Individuals/{IRN}/DisciplinaryHistory
+
+        where ``{FRN}``, ``{IRN}``, and ``{PRN}`` denote unique firm reference
+        numbers (FRN), individual reference numbers (IRN), and product
+        reference numbers (PRN).
+
+        The ``resource_ref_number`` must be a valid unique resource identifier
+        and ``resource_type`` should be a valid resource type, as given by one
+        of the strings ``'firm'``, ``'individual'``, or ``'fund'``.
             
         .. note::
 
            This is a private method and is **not** intended for direct use by
            end users.
 
-        Uses the firm-specific API endpoint(s)
-        ::
-
-            /V0.1/Firm/{FRN}[/<optional modifier(s)>]
-
-        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
-        request for information on Hiscox Insurance Company Limited, which has
-        the FRN 113849.
-        ::
-
-            /V0.1/Firm/113849
+        Returns an :py:class:`~fsrapiclient.api.FsrApiResponse`.
 
         The optional modifiers, given as a tuple of strings, should represent a
         valid ordered combination of actions and/or properties related to the
-        firm given by the FRN.
+        given resource as identified by the resource ref. number.
 
         The modifier strings should **NOT** contain any leading or trailing
         forward slashes (``"/"``) as this can lead to badly formed URLs
@@ -480,27 +528,48 @@ class FsrApiClient:
 
         Parameters
         ----------
-        frn : str
-            The firm reference number (FRN).
+        resource_ref_number : str
+            The resource reference number.
+
+        resource_type : str
+            The resource type - should be one of the strings ``'firm'``,
+            ``'individual'``, or ``'fund'``.
 
         modifiers : tuple, default=None
             Optional tuple of strings indicating a valid ordered combination of
-            resource and/or action modifiers for the firm in question. Should 
-            **NOT** have leading or trailing forward slashes (``"/"``).
+            resource and/or action modifiers for the resource in question.
+            Should **NOT** have leading or trailing forward slashes (``"/"``).
 
         Raises
         ------
         FsrApiRequestException
-            If there was a request exception from calling the firm search
-            endpoint.
+            If there was a request exception.
 
         Returns
         -------
         FsrApiResponse
             Wrapper of the API response object - there may be no data in
-            the response if the FRN isn't found.
+            the response if the resource ref. number isn't found.
         """
-        url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Firm/{frn}'
+        if resource_type not in FSR_API_CONSTANTS.RESOURCE_TYPES.value:
+            raise ValueError(
+                'Resource type must be one of the strings ``"firm"``, '
+                '``"fund"``, or ``"individual"``'
+            )
+
+        resource_endpoint_base = (
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value[resource_type]['endpoint_base']
+        )
+
+        url = (
+            f'{FSR_API_CONSTANTS.BASEURL.value}'
+            '/'
+            f'{self.api_version}'
+            '/'
+            f'{resource_endpoint_base}'
+            '/'
+            f'{resource_ref_number}'
+        )
 
         if modifiers:
             url += f'/{"/".join(modifiers)}'
@@ -543,7 +612,10 @@ class FsrApiClient:
         >>> res = client.get_firm('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn)
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name']
+        )
 
     def get_firm_names(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the alternative or secondary trading name details of a firm, given its firm reference number (FRN).
@@ -579,7 +651,11 @@ class FsrApiClient:
         >>> res = client.get_firm_names('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Names',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Names',)
+        )
 
     def get_firm_addresses(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the address details of a firm, given its firm reference number (FRN).
@@ -614,7 +690,10 @@ class FsrApiClient:
         >>> res = client.get_firm_addresses('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Address',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Address',))
 
     def get_firm_controlled_functions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the controlled functions associated with a firm ,given its firm reference number (FRN).
@@ -649,7 +728,11 @@ class FsrApiClient:
         >>> res = client.get_firm_controlled_functions('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('CF',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('CF',)
+        )
 
     def get_firm_individuals(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the individuals associated with a firm, given its firm reference number (FRN).
@@ -684,7 +767,11 @@ class FsrApiClient:
         >>> res = client.get_firm_individuals('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Individuals',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Individuals',)
+        )
 
     def get_firm_permissions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the permissions associated with a firm, given its firm reference number (FRN).
@@ -719,7 +806,11 @@ class FsrApiClient:
         >>> res = client.get_firm_permissions('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Permissions',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Permissions',)
+        )
 
     def get_firm_requirements(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the requirements associated with a firm, given its firm reference number (FRN).
@@ -754,7 +845,11 @@ class FsrApiClient:
         >>> res = client.get_firm_requirements('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Requirements',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Requirements',)
+        )
 
     def get_firm_requirement_investment_types(self, frn: str, req_ref: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any investment types listed for a specific requirement associated with a firm, given its firm reference number (FRN).
@@ -790,7 +885,11 @@ class FsrApiClient:
         >>> res = client.get_firm_requirement_investment_types('1234567890', 'OR-0262545')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Requirements', req_ref, 'InvestmentTypes'))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Requirements', req_ref, 'InvestmentTypes')
+        )
 
     def get_firm_regulators(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the regulators associated with a firm, given its firm reference number (FRN).
@@ -825,7 +924,11 @@ class FsrApiClient:
         >>> res = client.get_firm_regulators('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Regulators',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Regulators',)
+        )
 
     def get_firm_passports(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the passports associated with a firm, given its firm reference number (FRN).
@@ -860,7 +963,11 @@ class FsrApiClient:
         >>> res = client.get_firm_passports('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Passports',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Passports',)
+        )
 
     def get_firm_passport_permissions(self, frn: str, country: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing country-specific passport permissions for a firm and a country, given its firm reference number (FRN) and country name.
@@ -896,7 +1003,11 @@ class FsrApiClient:
         >>> res = client.get_firm_passport_permissions('1234567890', 'Gibraltar')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Passports', country, 'Permission'))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Passports', country, 'Permission')
+        )
 
     def get_firm_waivers(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any waivers applying to a firm, given its firm reference number (FRN).
@@ -931,7 +1042,11 @@ class FsrApiClient:
         >>> res = client.get_firm_waivers('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Waivers',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Waivers',)
+        )
 
     def get_firm_exclusions(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing any exclusions applying to a firm, given its firm reference number (FRN).
@@ -966,7 +1081,11 @@ class FsrApiClient:
         >>> res = client.get_firm_exclusions('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('Exclusions',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('Exclusions',)
+        )
 
     def get_firm_disciplinary_history(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the disciplinary history of a firm, given its firm reference number (FRN).
@@ -1001,7 +1120,11 @@ class FsrApiClient:
         >>> res = client.get_firm_disciplinary_history('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._firm_info(frn, modifiers=('DisciplinaryHistory',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('DisciplinaryHistory',)
+        )
 
     def get_firm_appointed_representatives(self, frn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing information on the appointed representatives of a firm, given its firm reference number (FRN).
@@ -1037,7 +1160,11 @@ class FsrApiClient:
         >>> res = client.get_firm_appointed_representatives('1234567890')
         >>> assert not any([res.fsr_data['PreviousAppointedRepresentatives'], res.fsr_data['CurrentAppointedRepresentatives']])
         """
-        return self._firm_info(frn, modifiers=('AR',))
+        return self._get_resource_info(
+            frn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['firm']['type_name'],
+            modifiers=('AR',)
+        )
 
     def search_irn(self, individual_name: str) -> str:
         """:py:class:`str`: Returns the unique individual reference number (IRN) of a given individual, if found.
@@ -1086,111 +1213,16 @@ class FsrApiClient:
         >>> client.search_irn('Mark C')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple individuals returned. The individual name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_irn('A Nonexistent Person')
         Traceback (most recent call last):
         ...
         fsrapiclient.exceptions.FsrApiResponseException: No data found in FS Register API response. Please check the search parameters and try again.
         """
-        try:
-            res = self.common_search(urlencode({'q': individual_name, 'type': 'individual'}))
-        except FsrApiRequestException:
-            raise
-            
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple individuals returned. The individual name needs '
-                    'to be more precise. If you are unsure of the results '
-                    'please use the common search endpoint'
-                )
-
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general individual search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
-
-    def _individual_info(self, irn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse`: A private, base handler for individual information API handlers.
-
-        Is the base handler for the following individual-specific FS Register
-        API endpoints:
-        ::
-
-            /V0.1/Individuals/{IRN}
-            /V0.1/Individuals/{IRN}/CF
-            /V0.1/Individuals/{IRN}/DisciplinaryHistory
-
-        .. note::
-
-           This is a private method and is **not** intended for direct use by
-           end users.
-
-        Uses the API individual endpoint(s)
-        ::
-
-            /V0.1/Individuals/{IRN}[/<optional modifier(s)>]
-
-        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
-        request for information on "Mark Carney", who has the IRN 'MXC29012'.
-        ::
-
-            /V0.1/Individuals/MXC29012
-
-        The optional modifiers, given as a tuple of strings, should represent a
-        valid ordered combination of actions and/or properties related to the
-        individual given by the IRN.
-
-        The modifier strings should **NOT** contain any leading or trailing
-        forward slashes (``"/"``) as this can lead to badly formed URLs
-        and to responses with no data - in any case, any leading or trailing
-        forward slashes are stripped before the request.
-
-        Parameters
-        ----------
-        irn : str
-            The individual reference number (IRN).
-
-        modifiers : tuple, default=None
-            Optional tuple of strings indicating a valid ordered combination of
-            resource and/or action modifiers for the individual in question.
-            Should **NOT** have leading or trailing forward slashes (``"/"``).
-
-        Raises
-        ------
-        FsrApiRequestException
-            If there was a request exception from calling the firm search
-            endpoint.
-
-        Returns
-        -------
-        FsrApiResponse
-            Wrapper of the API response object - there may be no data in
-            the response if the FRN isn't found.
-        """
-        url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Individuals/{irn}'
-
-        if modifiers:
-            url += f'/{"/".join(modifiers)}'
-
-        try:
-            return FsrApiResponse(self.api_session.get(url))
-        except requests.RequestException as e:
-            raise FsrApiRequestException(e)
+        return self._search_ref_number(
+            individual_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['individual']['type_name']
+        )
 
     def get_individual(self, irn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing individual details, given their individual reference number (IRN)
@@ -1225,7 +1257,10 @@ class FsrApiClient:
         >>> res = client.get_individual('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._individual_info(irn)
+        return self._get_resource_info(
+            irn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['individual']['type_name']
+        )
 
     def get_individual_controlled_functions(self, irn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the controlled functions associated with an individual, given their individual reference number (FRN).
@@ -1260,7 +1295,11 @@ class FsrApiClient:
         >>> res = client.get_individual_controlled_functions('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._individual_info(irn, modifiers=('CF',))
+        return self._get_resource_info(
+            irn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['individual']['type_name'],
+            modifiers=('CF',)
+        )
 
     def get_individual_disciplinary_history(self, irn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the disciplinary history of an individual, given their individual reference number (FRN).
@@ -1297,7 +1336,11 @@ class FsrApiClient:
         >>> res = client.get_individual_disciplinary_history('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._individual_info(irn, modifiers=('DisciplinaryHistory',))
+        return self._get_resource_info(
+            irn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['individual']['type_name'],
+            modifiers=('DisciplinaryHistory',)
+        )
 
     def search_prn(self, fund_name: str) -> str:
         """:py:class:`str` : Returns the unique product reference number (PRN) of a given fund or collective investment scheme (CIS), including subfunds, if it exists.
@@ -1342,11 +1385,11 @@ class FsrApiClient:
         >>> client.search_prn('Northern Trust')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_prn('Northern Trust High Dividend ESG World Equity')
         Traceback (most recent call last):
         ...
-        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint
+        fsrapiclient.exceptions.FsrApiResponseException: Multiple funds returned. The fund name needs to be more precise. If you are unsure of the results please use the common search endpoint.
         >>> client.search_prn('Northern Trust High Dividend ESG World Equity Feeder Fund')
         '913937'
         >>> client.search_prn('A nonexistent fund')
@@ -1354,106 +1397,10 @@ class FsrApiClient:
         ...
         fsrapiclient.exceptions.FsrApiResponseException: No data found in FS Register API response. Please check the search parameters and try again.
         """
-        try:
-            res = self.common_search(urlencode({'q': fund_name, 'type': 'fund'}))
-        except FsrApiRequestException:
-            raise
-            
-        if res.ok and res.fsr_data:
-            if len(res.fsr_data) > 1:
-                raise FsrApiResponseException(
-                    'Multiple funds returned. The fund name needs '
-                    'to be more precise. If you are unsure of the results '
-                    'please use the common search endpoint'
-                )
-
-            try:
-                return res.fsr_data[0]['Reference Number']
-            except (KeyError, IndexError):
-                raise FsrApiResponseException(
-                    'Unexpected response data structure from the FS Register API for '
-                    'general fund search by name! Please check the FS Register API '
-                    'developer documentation at https://register.fca.org.uk/Developer/s/'
-                )
-        elif not res.fsr_data:
-            raise FsrApiResponseException(
-                'No data found in FS Register API response. Please check the search '
-                'parameters and try again.'
-            )
-        else:
-            raise FsrApiResponseException(
-                f'FS Register API search request failed for some other reason: '
-                f'{res.reason}'
-            )
-
-    def _fund_info(self, prn: str, modifiers: tuple[str] = None) -> FsrApiResponse:
-        """:py:class:`~fsrapiclient.api.FsrApiResponse` : A private, base handler for fund (or collective investment scheme (CIS)) information API handlers.
-
-        Is the base handler for the following fund-specific API endpoints:
-        ::
-
-            /V0.1/CIS/{PRN}
-            /V0.1/CIS/{PRN}/Subfund
-            /V0.1/CIS/{PRN}/Names
-
-        .. note::
-
-           This is a private method and is **not** intended for direct use by
-           end users.
-
-        Uses the API individual endpoint(s)
-        ::
-
-            /V0.1/CIS/{PRN}[/<optional modifier(s)>]
-
-        and returns an :py:class:`~fsrapiclient.api.FsrApiResponse`, e.g. a
-        request for information on
-        "Northern Trust High Dividend ESG World Equity Feeder Fund"
-        (PRN 913937).
-        ::
-
-            /V0.1/CIS/913937
-
-        The optional modifiers, given as a tuple of strings, should represent a
-        valid ordered combination of actions and/or properties related to the
-        fund given by the PRN.
-
-        The modifier strings should **NOT** contain any leading or trailing
-        forward slashes (``"/"``) as this can lead to badly formed URLs
-        and to responses with no FS Register data - in any case, any leading or
-        trailing forward slashes are stripped before the request.
-
-        Parameters
-        ----------
-        prn : str
-            The product reference number (IRN).
-
-        modifiers : tuple, default=None
-            Optional tuple of strings indicating a valid ordered combination of
-            resource and/or action modifiers for the fund in question.
-            Should **NOT** have leading or trailing forward slashes (``"/"``).
-
-        Raises
-        ------
-        FsrApiRequestException
-            If there was a request exception from calling the firm search
-            endpoint.
-
-        Returns
-        -------
-        FsrApiResponse
-            Wrapper of the API response object - there may be no data in
-            the response if the FRN isn't found.
-        """
-        url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/CIS/{prn}'
-
-        if modifiers:
-            url += f'/{"/".join(modifiers)}'
-
-        try:
-            return FsrApiResponse(self.api_session.get(url))
-        except requests.RequestException as e:
-            raise FsrApiRequestException(e)
+        return self._search_ref_number(
+            fund_name,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['fund']['type_name']
+        )
 
     def get_fund(self, prn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing fund (or collective investment scheme (CIS)) details, given its product reference number (PRN)
@@ -1488,7 +1435,10 @@ class FsrApiClient:
         >>> res = client.get_fund('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._fund_info(prn)
+        return self._get_resource_info(
+            prn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['fund']['type_name']
+        )
 
     def get_fund_names(self, prn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the alternative or secondary trading name details of a fund (or collective investment scheme (CIS)), given its product reference number (PRN).
@@ -1523,7 +1473,11 @@ class FsrApiClient:
         >>> res = client.get_fund_names('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._fund_info(prn, modifiers=('Names',))
+        return self._get_resource_info(
+            prn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['fund']['type_name'],
+            modifiers=('Names',)
+        )
 
     def get_fund_subfunds(self, prn: str) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing the subfund details of a fund (or collective investment scheme (CIS)), given its product reference number (PRN).
@@ -1558,7 +1512,11 @@ class FsrApiClient:
         >>> res = client.get_fund_subfunds('1234567890')
         >>> assert not res.fsr_data
         """
-        return self._fund_info(prn, modifiers=('Subfund',))
+        return self._get_resource_info(
+            prn,
+            FSR_API_CONSTANTS.RESOURCE_TYPES.value['fund']['type_name'],
+            modifiers=('Subfund',)
+        )
 
 if __name__ == "__main__":      # pragma: no cover
     # Doctest the module from the project root using

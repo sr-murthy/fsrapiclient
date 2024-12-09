@@ -20,7 +20,14 @@ class FSR_API_CONSTANTS(Enum):
     'https://register.fca.org.uk/services'
     >>> FSR_API_CONSTANTS.API_VERSION.value
     'V0.1'
+    >>> FSR_API_CONSTANTS.RESOURCE_TYPES.value
+    {'firm': {'type_name': 'firm', 'endpoint_base': 'Firm'}, 'fund': {'type_name': 'fund', 'endpoint_base': 'CIS'}, 'individual': {'type_name': 'individual', 'endpoint_base': 'Individuals'}}
     """
 
     BASEURL = 'https://register.fca.org.uk/services'
     API_VERSION = 'V0.1'
+    RESOURCE_TYPES = {
+        'firm': {'type_name': 'firm', 'endpoint_base': 'Firm'},
+        'fund': {'type_name': 'fund', 'endpoint_base': 'CIS'},
+        'individual': {'type_name': 'individual', 'endpoint_base': 'Individuals'}
+    }
