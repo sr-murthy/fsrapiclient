@@ -25,7 +25,7 @@ There are three main categories of resource about which information can be reque
 - **individuals** - individuals associated with the type of firms described above, either current or past.  Individuals in the register have unique **individual reference numbers (IRN)** and their endpoints usually take these as one of the parameters. They are described in more detail :ref:`here <fs-register-api.individual-requests>`.
 - **funds** - investment funds or collective investment schemes (CIS),including subfunds of funds. Funds in the register have unique **product reference numbers (PRN)** and their endpoints usually take these as one of the parameters. They are described in more detail :ref:`here <fs-register-api.fund-requests>`.
 
-There is also a **common search** API endpoint that allows a search for any of these resources by a name substring and a corresponding type specification (firm, individual, or fund). This is described in more detail :ref:`here <fs-register-api.common-search-requests>`.
+There are also search endpoints that allow a search for *(a)* any of these resources by a name substring and a corresponding type specification (firm, individual, or fund), or *(b)* `regulated markets <https://www.handbook.fca.org.uk/handbook/glossary/G978.html?date=2007-01-20>`_. These are described in more detail :ref:`here <fs-register-api.common-search-requests>`.
 
 .. _fs-register-api.request-headers:
 
@@ -189,7 +189,7 @@ The common search API endpoint is a parameterised search endpoint which is summa
    * - API Endpoint
      - Request Method
      - Search Parameters
-   * - ``/V0.1/CommonSearch``
+   * - ``/V0.1/Search``
      - GET
      - ``q`` (resource name), ``type`` (resource type - ``'firm'``, ``'individual'``, or ``'fund'``)
 
@@ -197,7 +197,7 @@ Requests should be of the form:
 
 .. code:: http
 
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=resource_name&type=resource_type HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=resource_name&type=resource_type HTTP/1.1
 
 For example, here are a few valid common search requests.
 
@@ -205,42 +205,48 @@ For example, here are a few valid common search requests.
 
 .. code:: http
 
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Barclays+Bank+plc&type=firm HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=Barclays+Bank+plc&type=firm HTTP/1.1
 
 * Common search for Hastings Insurance Services Limited (FRN #311492)
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=hastings+insurance+services&type=firm HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=hastings+insurance+services&type=firm HTTP/1.1
 
 * Common search for all Natwest-related firms:
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=Natwest&type=firm HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=Natwest&type=firm HTTP/1.1
 
 * Common search for a specific individual, Mark Carney (IRN #MXC29012):
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=mark+carney&type=individual HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=mark+carney&type=individual HTTP/1.1
 
 * Common search for a generic individual name "John Smith", with multiple results:
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=John+Smith&type=individual HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=John+Smith&type=individual HTTP/1.1
 
 * Common search for a specific fund, Jupiter Asia Pacific Income (PRN #635641):
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=jupiter+asia+pacific+income&type=fund HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=jupiter+asia+pacific+income&type=fund HTTP/1.1
 
 * Common search for a specific fund, abrdn Multi-Asset Fund (PRN #637980):
 
 .. code:: http
    
-   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=abrdn+multi-asset+fund&type=fund HTTP/1.1
+   GET https://register.fca.org.uk/services/V0.1/Search?q=abrdn+multi-asset+fund&type=fund HTTP/1.1
 
-For details and examples on calling this endpoint via this library see :ref:`this <usage.common-search>`.
+One particular type of common search-based endpoint that the API provides separately is for `regulated markets <https://www.handbook.fca.org.uk/handbook/glossary/G978.html?date=2007-01-20>`_. These are special markets which are regulated by UK and/or EU/EEA financial legislation. API requests for regulated markets should look as below:
+
+.. code:: http
+
+   GET https://register.fca.org.uk/services/V0.1/CommonSearch?q=RM HTTP/1.1
+
+For details and examples on calling these endpoint via this library see :ref:`this <usage.common-search>`.
