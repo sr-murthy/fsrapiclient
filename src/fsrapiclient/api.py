@@ -331,7 +331,7 @@ class FsrApiClient:
         >>> client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
         <Response [200]>
         """
-        url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Search?{search_str}'
+        url = f'{FSR_API_CONSTANTS.BASEURL.value}/Search?{search_str}'
 
         try:
             return FsrApiResponse(self.api_session.get(url))
@@ -352,7 +352,7 @@ class FsrApiClient:
             /V0.1/Search?q=resource_name&type=resource_type
 
         to perform a case-insensitive search for resources of type
-        ``resource_type``in the FS Register on the given resource name
+        ``resource_type`` in the FS Register on the given resource name
         substring.
 
         Returns a non-null string of the resource ref. number if there is
@@ -563,8 +563,6 @@ class FsrApiClient:
 
         url = (
             f'{FSR_API_CONSTANTS.BASEURL.value}'
-            '/'
-            f'{self.api_version}'
             '/'
             f'{resource_endpoint_base}'
             '/'
@@ -1516,6 +1514,84 @@ class FsrApiClient:
             prn,
             FSR_API_CONSTANTS.RESOURCE_TYPES.value['fund']['type_name'],
             modifiers=('Subfund',)
+        )
+
+    def get_regulated_markets(self) -> FsrApiResponse:
+        """:py:class:`~fsrapiclient.api.FsrApiResponse` : Returns a response containing details of all current regulated markets, as defined in UK and EU / EEA financial services legislation.
+
+        For further information consult the API documentation:
+
+        https://register.fca.org.uk/Developer/s/
+
+        or the FCA glossary:
+
+        https://www.handbook.fca.org.uk/handbook/glossary/G978.html?date=2007-01-20
+
+        Returns
+        -------
+        FsrApiResponse
+            Wrapper of the API response object - there may be no data in
+            the response if the common search query produces no results.
+
+        Examples
+        --------
+        >>> import json, os
+        >>> client = FsrApiClient(os.environ['API_USERNAME'], os.environ['API_KEY'])
+        >>> res = client.get_regulated_markets()
+        >>> print(json.dumps(res.fsr_data, indent=True))
+        [
+         {
+          "Name": "The London Metal Exchange",
+          "TradingName": "",
+          "Type of business or Individual": "Exchange - RM",
+          "Reference Number": "",
+          "Status": "",
+          "FirmURL": "https://register.fca.org.uk/services/V0.1/Firm/"
+         },
+         {
+          "Name": "ICE Futures Europe",
+          "TradingName": "",
+          "Type of business or Individual": "Exchange - RM",
+          "Reference Number": "",
+          "Status": "",
+          "FirmURL": "https://register.fca.org.uk/services/V0.1/Firm/"
+         },
+         {
+          "Name": "London Stock Exchange",
+          "TradingName": "",
+          "Type of business or Individual": "Exchange - RM",
+          "Reference Number": "",
+          "Status": "",
+          "FirmURL": "https://register.fca.org.uk/services/V0.1/Firm/"
+         },
+         {
+          "Name": "Aquis Stock Exchange Limited",
+          "TradingName": "ICAP Securities & Derivatives Exchange Limited",
+          "Type of business or Individual": "Exchange - RM",
+          "Reference Number": "",
+          "Status": "",
+          "FirmURL": "https://register.fca.org.uk/services/V0.1/Firm/"
+         },
+         {
+          "Name": "Cboe Europe Equities Regulated Market",
+          "TradingName": "",
+          "Type of business or Individual": "Exchange - RM",
+          "Reference Number": "",
+          "Status": "",
+          "FirmURL": "https://register.fca.org.uk/services/V0.1/Firm/"
+         }
+        ]
+        """
+        url = (
+            f'{FSR_API_CONSTANTS.BASEURL.value}'
+            '/'
+            'CommonSearch'
+            '?'
+            f'{urlencode({"q": "RM"})}'
+        )
+
+        return FsrApiResponse(
+            self.api_session.get(url)
         )
 
 if __name__ == "__main__":      # pragma: no cover

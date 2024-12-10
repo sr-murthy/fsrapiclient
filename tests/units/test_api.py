@@ -917,3 +917,16 @@ class TestFsrApiClient(_TestFsrApi):
         recv_response = test_client.get_fund_subfunds('1234567890')
         assert recv_response.ok
         assert not recv_response.fsr_data
+
+    def test_fsr_api_client__get_regulated_markets(self):
+        test_client = FsrApiClient(self._api_username, self._api_key)
+
+        # Covers the regulated markets API endpoint, which ATM returns a
+        # list of markets regulated by UK and/or EU/EEA financial legislation.
+        #
+        # We don't bother to check the exact list of markets returned by the
+        # endpoint, as this may change - it is enough to check that the endpoint
+        # should provide some data.
+        recv_response = test_client.get_regulated_markets()
+        assert recv_response.ok
+        assert recv_response.fsr_data

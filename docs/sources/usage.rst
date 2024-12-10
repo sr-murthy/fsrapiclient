@@ -63,7 +63,7 @@ The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrAp
 
 .. code:: bash
 
-   q=<resource name>&type=<resource type>
+   q=resource_name&type=resource_type
 
 where ``q`` is a parameter whose value should be the name (or name substring) of a resource (firm, individual, or fund), and ``type`` is a parameter whose value should be one of ``'firm'``, ``'individual'``, ``'fund'``.
 
@@ -126,6 +126,48 @@ The response data as stored in the :py:attr:`~fsrapiclient.api.FsrApiResponse.fs
 
    >>> client.common_search(urlencode({'q': 'natwest', 'type': 'individual'})).fsr_data
    # Null
+
+.. _usage.regulated-markets:
+
+Regulated Markets
+-----------------
+
+The client implements a `regulated markets <https://www.handbook.fca.org.uk/handbook/glossary/G978.html?date=2007-01-20>`_ search endpoint via the :py:meth:`~fsrapiclient.api.FsrApiClient.get_regulated_markets` method:
+
+.. code:: python
+
+   >>> c.get_regulated_markets().fsr_data
+
+   [{'Name': 'The London Metal Exchange',
+     'TradingName': '',
+     'Type of business or Individual': 'Exchange - RM',
+     'Reference Number': '',
+     'Status': '',
+     'FirmURL': 'https://register.fca.org.uk/services/V0.1/Firm/'},
+    {'Name': 'ICE Futures Europe',
+     'TradingName': '',
+     'Type of business or Individual': 'Exchange - RM',
+     'Reference Number': '',
+     'Status': '',
+     'FirmURL': 'https://register.fca.org.uk/services/V0.1/Firm/'},
+    {'Name': 'London Stock Exchange',
+     'TradingName': '',
+     'Type of business or Individual': 'Exchange - RM',
+     'Reference Number': '',
+     'Status': '',
+     'FirmURL': 'https://register.fca.org.uk/services/V0.1/Firm/'},
+    {'Name': 'Aquis Stock Exchange Limited',
+     'TradingName': 'ICAP Securities & Derivatives Exchange Limited',
+     'Type of business or Individual': 'Exchange - RM',
+     'Reference Number': '',
+     'Status': '',
+     'FirmURL': 'https://register.fca.org.uk/services/V0.1/Firm/'},
+    {'Name': 'Cboe Europe Equities Regulated Market',
+     'TradingName': '',
+     'Type of business or Individual': 'Exchange - RM',
+     'Reference Number': '',
+     'Status': '',
+     'FirmURL': 'https://register.fca.org.uk/services/V0.1/Firm/'}]
 
 .. _usage.searching-ref-numbers:
 

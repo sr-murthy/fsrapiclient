@@ -158,7 +158,7 @@ and the `CodeQL Analysis YML <https://github.com/sr-murthy/fsrapiclient/blob/mai
 Versioning and Releases :fas:`upload`
 =====================================
 
-The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.3.0``.
+The `PyPI package <https://pypi.org/project/fsrapiclient/>`_ is currently at version ``0.4.0``.
 
 There is currently no dedicated pipeline for releases - both `GitHub releases <https://github.com/sr-murthy/fsrapiclient/releases>`_ and `PyPI packages <https://pypi.org/project/fsrapiclient>`_ are published manually, but both have the same version tag.
 
