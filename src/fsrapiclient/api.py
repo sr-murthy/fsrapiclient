@@ -331,7 +331,7 @@ class FsrApiClient:
         >>> client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
         <Response [200]>
         """
-        url = f'{FSR_API_CONSTANTS.BASEURL.value}/{self.api_version}/Search?{search_str}'
+        url = f'{FSR_API_CONSTANTS.BASEURL.value}/Search?{search_str}'
 
         try:
             return FsrApiResponse(self.api_session.get(url))
@@ -563,8 +563,6 @@ class FsrApiClient:
 
         url = (
             f'{FSR_API_CONSTANTS.BASEURL.value}'
-            '/'
-            f'{self.api_version}'
             '/'
             f'{resource_endpoint_base}'
             '/'
@@ -1586,8 +1584,6 @@ class FsrApiClient:
         """
         url = (
             f'{FSR_API_CONSTANTS.BASEURL.value}'
-            '/'
-            f'{self.api_version}'
             '/'
             'CommonSearch'
             '?'
