@@ -71,7 +71,7 @@ Some examples of common search are given below for Barclays Bank Plc.
 
 .. code:: python
 
-   >>> res = client.common_search('barclays bank', firm')
+   >>> res = client.common_search('barclays bank', 'firm')
    >>> res
    <Response [200]>
    >>> res.fsr_data
@@ -111,7 +111,7 @@ Here are some further examples of common search for firms, individuals and funds
      'Type of business or Individual': 'Individual',
      'Name': 'Mark Carney'}]
    #
-   >>> client.common_search(urlencode('jupiter asia pacific income', 'fund').fsr_data
+   >>> client.common_search('jupiter asia pacific income', 'fund').fsr_data
    [{'URL': 'https://register.fca.org.uk/services/V0.1/CIS/635641',
      'Status': 'Recognised',
      'Reference Number': '635641',
