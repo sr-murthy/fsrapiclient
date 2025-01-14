@@ -59,12 +59,12 @@ class TestFsrApiClient(_TestFsrApi):
             mock_api_session_get.side_effect = requests.RequestException('test RequestException')
 
             with pytest.raises(FsrApiRequestException):
-                test_client.common_search(urlencode({'q': 'exceptional query', 'type': 'firm'}))
+                test_client.common_search('exceptional resource', 'firm')
 
     def test_fsr_api_client__common_search__no_api_request_exception(self):
         test_client = FsrApiClient(self._api_username, self._api_key)
 
-        recv_response = test_client.common_search(urlencode({'q': 'hastings direct', 'type': 'firm'}))
+        recv_response = test_client.common_search('hastings direct', 'firm')
         assert recv_response.ok
         assert recv_response.fsr_data
         assert len(recv_response.fsr_data)
@@ -72,7 +72,37 @@ class TestFsrApiClient(_TestFsrApi):
         assert recv_response.fsr_message == 'Ok. Search successful'
         assert recv_response.fsr_resultinfo
 
-        recv_response = test_client.common_search(urlencode({'q': 'non existent firm', 'type': 'firm'}))
+        recv_response = test_client.common_search('non existent firm', 'firm')
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+        assert recv_response.fsr_status == 'FSR-API-04-01-11'
+        assert recv_response.fsr_message == 'No search result found'
+        assert not recv_response.fsr_resultinfo
+
+        recv_response = test_client.common_search('mark carney', 'individual')
+        assert recv_response.ok
+        assert recv_response.fsr_data
+        assert len(recv_response.fsr_data)
+        assert recv_response.fsr_status == 'FSR-API-04-01-00'
+        assert recv_response.fsr_message == 'Ok. Search successful'
+        assert recv_response.fsr_resultinfo
+
+        recv_response = test_client.common_search('non existent individual', 'individual')
+        assert recv_response.ok
+        assert not recv_response.fsr_data
+        assert recv_response.fsr_status == 'FSR-API-04-01-11'
+        assert recv_response.fsr_message == 'No search result found'
+        assert not recv_response.fsr_resultinfo
+
+        recv_response = test_client.common_search('jupiter asia pacific income', 'fund')
+        assert recv_response.ok
+        assert recv_response.fsr_data
+        assert len(recv_response.fsr_data)
+        assert recv_response.fsr_status == 'FSR-API-04-01-00'
+        assert recv_response.fsr_message == 'Ok. Search successful'
+        assert recv_response.fsr_resultinfo
+
+        recv_response = test_client.common_search('non existent fund', 'fund')
         assert recv_response.ok
         assert not recv_response.fsr_data
         assert recv_response.fsr_status == 'FSR-API-04-01-11'
