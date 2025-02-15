@@ -59,7 +59,7 @@ As :py:class:`~fsrapiclient.api.FsrApiResponse` is a subclass of :py:class:`requ
 Common Search
 =============
 
-The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrApiClient.common_search()` method to make generic queries for firms, individuals, or funds. It requires an URL-encoded parameterised string of the form:
+The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrApiClient.common_search()` method to make generic queries for firms, individuals, or funds. It requires two arguments, a resource name (or name substring) to search for, and a resource type which must be one of the following strings: ``"firm"``, ``"individual"``, or ``"fund"``. The method then calls the common search endpoint with a URL-encoded string of the form below:
 
 .. code:: bash
 
@@ -67,13 +67,11 @@ The common search endpoint can be used via the :py:meth:`~fsrapiclient.api.FsrAp
 
 where ``q`` is a parameter whose value should be the name (or name substring) of a resource (firm, individual, or fund), and ``type`` is a parameter whose value should be one of ``'firm'``, ``'individual'``, ``'fund'``.
 
-Use :py:func:`urllib.parse.urlencode` to do the URL-encoding. Some examples of common search are given below for Barclays Bank Plc.
+Some examples of common search are given below for Barclays Bank Plc.
 
 .. code:: python
 
-   from urllib.parse import urlencode
-   #
-   >>> res = client.common_search(urlencode({'q': 'barclays bank', 'type': 'firm'}))
+   >>> res = client.common_search('barclays bank', 'firm')
    >>> res
    <Response [200]>
    >>> res.fsr_data
@@ -99,21 +97,21 @@ Here are some further examples of common search for firms, individuals and funds
 
 .. code:: python
 
-   >>> client.common_search(urlencode({'q': 'revolut bank', 'type': 'firm'})).fsr_data
+   >>> client.common_search('revolut bank', firm').fsr_data
    [{'URL': 'https://register.fca.org.uk/services/V0.1/Firm/833790',
      'Status': 'No longer authorised',
      'Reference Number': '833790',
      'Type of business or Individual': 'Firm',
      'Name': 'Revolut Bank UAB'}]
    #
-   >>> client.common_search(urlencode({'q': 'mark carney', 'type': 'individual'})).fsr_data
+   >>> client.common_search('mark carney', 'individual').fsr_data
    [{'URL': 'https://register.fca.org.uk/services/V0.1/Individuals/MXC29012',
      'Status': 'Active',
      'Reference Number': 'MXC29012',
      'Type of business or Individual': 'Individual',
      'Name': 'Mark Carney'}]
    #
-   >>> client.common_search(urlencode({'q': 'jupiter asia pacific income', 'type': 'fund'})).fsr_data
+   >>> client.common_search('jupiter asia pacific income', 'fund').fsr_data
    [{'URL': 'https://register.fca.org.uk/services/V0.1/CIS/635641',
      'Status': 'Recognised',
      'Reference Number': '635641',
@@ -124,7 +122,7 @@ The response data as stored in the :py:attr:`~fsrapiclient.api.FsrApiResponse.fs
 
 .. code:: python
 
-   >>> client.common_search(urlencode({'q': 'natwest', 'type': 'individual'})).fsr_data
+   >>> client.common_search('natwest', 'individual').fsr_data
    # Null
 
 .. _usage.regulated-markets:

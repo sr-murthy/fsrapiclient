@@ -11,8 +11,10 @@ __all__ = ['FsrApiClient',
 # -- Standard libraries --
 import pathlib
 import sys
+
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 
+from typing import Literal
 from urllib.parse import urlencode
 
 # -- 3rd party libraries --
@@ -120,7 +122,7 @@ class FsrApiResponse(requests.models.Response):
     --------
     >>> import os
     >>> client = FsrApiClient(os.environ['API_USERNAME'], os.environ['API_KEY'])
-    >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
+    >>> res = client.common_search('Hastings Direct', 'firm')
     >>> res
     <Response [200]>
     """
@@ -194,7 +196,7 @@ class FsrApiClient:
     --------
     >>> import os; from urllib.parse import urlencode
     >>> client = FsrApiClient(os.environ['API_USERNAME'], os.environ['API_KEY'])
-    >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
+    >>> res = client.common_search('Hastings Direct', 'firm')
     >>> res
     <Response [200]>
     >>> assert res.fsr_data
@@ -277,33 +279,32 @@ class FsrApiClient:
         """
         return FSR_API_CONSTANTS.API_VERSION.value
 
-    def common_search(self, search_str: str) -> FsrApiResponse:
+    def common_search(self, resource_name: str, resource_type: Literal['firm', 'individual', 'fund']) -> FsrApiResponse:
         """:py:class:`~fsrapiclient.api.FsrApiResponse`: Returns a response containing the results of a search using the FS Register API common search API endpoint.
 
-        Directly calls on the API common search endpoint:
+        Directly calls the API common search endpoint:
         ::
 
-            /V0.1/Search?q=<query>&type=<resource type>
+            /V0.1/Search?q=resource_name>&type=resource_type
 
         to perform a case-insensitive search in the FS Register on the given
-        search string and resource type (``"firm"``, ``"individual"``,
-        ``"fund"``).
+        resource name (or name substring) and resource type (``"firm"``,
+        ``"individual"``, ``"fund"``).
 
         Returns an :py:class:`~fsrapiclient.api.FsrApiResponse` object if the
         API call completes without exceptions or errors.
 
         Parameters
         ----------
-        search_str : str
-            The search string - this should be a URL-encoded, parameterised
-            search string of the form:
-            ::
+        resource_name : str
+            The name (or name substring) of a resource to search for in the
+            FS Register, e.g. ``"ABC Company"``, ``"John Smith"``,
+            ``"International Super Fund"``.
 
-                q=<resource name>&type=<resource type>
-
-            where ``<resource name>`` is the name of a firm, individual or fund
-            (collective investment scheme), and ``<resource type>`` is one of
-            the strings ``"firm"``, ``"individual"``, or ``"fund"``.
+        resource_type : str
+            The resource type to search for - according to the API this must
+            be one of the following strings: ``"firm"``, ``"individual"``, or
+            ``"fund"``.
 
         Returns
         -------
@@ -319,18 +320,17 @@ class FsrApiClient:
 
         Examples
         --------
-        >>> import os; from urllib.parse import urlencode
+        >>> import os
         >>> client = FsrApiClient(os.environ['API_USERNAME'], os.environ['API_KEY'])
-        >>> res = client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
+        >>> res = client.common_search('Hastings Direct', 'firm')
         >>> res
         <Response [200]>
         >>> assert res.fsr_data
         >>> assert res.fsr_status
         >>> assert res.fsr_message
         >>> assert res.fsr_resultinfo
-        >>> client.common_search(urlencode({'q': 'Hastings Direct', 'type': 'firm'}))
-        <Response [200]>
         """
+        search_str = urlencode({'q': resource_name, 'type': resource_type})
         url = f'{FSR_API_CONSTANTS.BASEURL.value}/Search?{search_str}'
 
         try:
@@ -389,7 +389,7 @@ class FsrApiClient:
             )
 
         try:
-            res = self.common_search(urlencode({'q': resource_name, 'type': resource_type}))
+            res = self.common_search(resource_name, resource_type)
         except FsrApiRequestException:
             raise
 
