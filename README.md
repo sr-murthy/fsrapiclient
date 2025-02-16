@@ -19,7 +19,7 @@
 
 A lightweight Python client library for the UK [Financial Services Register](https://register.fca.org.uk/s/) [RESTful API](https://register.fca.org.uk/Developer/s/).
 
-The [PyPI package](https://pypi.org/project/fsrapiclient) is currently at version `0.5.0`.
+The [PyPI package](https://pypi.org/project/fsrapiclient) is currently at version `0.5.1`.
 
 The Financial Services Register, or FS Register, is a **public** database of all firms, individuals, funds, and other entities, that are either currently, or have been previously, authorised and/or regulated by the UK [Financial Conduct Authority (FCA)](https://www.fca.org.uk) and/or the [Prudential Regulation Authority (PRA)](http://bankofengland.co.uk/pra).
 
