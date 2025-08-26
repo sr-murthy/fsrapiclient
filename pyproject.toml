@@ -111,7 +111,7 @@ build = [
 ]
 docs = [
     "myst-parser",
-    "furo",
+    "furo==2024.04.27",
     "Sphinx",
     "sphinx-autobuild",
     "sphinx-copybutton",
